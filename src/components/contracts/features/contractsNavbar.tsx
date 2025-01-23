@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { Input } from "@/components/ui/input"
-import { Search, MenuIcon } from "@/components/ui/icons"
+import { Input } from "@/components/ui/input";
+import { Search, MenuIcon } from "@/components/ui/icons";
 
-import styles from "@/app/contracts/contract.module.css"
-import { Button } from "@/components/ui/button"
-import { useState } from "react"
-import { ContractsLogo } from "../ui/contractsLogo"
+import styles from "@/app/contract.module.css";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { ContractsLogo } from "../ui/contractsLogo";
 
 const ContractsNavbar = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div
       className={`flex justify-between md:gap-2 gap-8 items-center md:px-16 px-4 py-3 bg-transparent ${styles.contractsNavbar} ${styles.bgPrimary} shadow-sm `}
@@ -49,7 +49,7 @@ const ContractsNavbar = () => {
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ContractsNavbar
+export default ContractsNavbar;

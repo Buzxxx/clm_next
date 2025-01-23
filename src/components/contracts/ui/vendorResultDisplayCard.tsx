@@ -1,34 +1,34 @@
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Image from "next/image"
-import styles from "@/app/contracts/contract.module.css"
-import PercentagePopover from "./percentagePopover"
-import CircularProgress from "@/components/ui/icons/circularProgressBar"
-import { BadgeCheck, MapPin, ReceiptText } from "@/components/ui/icons"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import styles from "@/app/contract.module.css";
+import PercentagePopover from "./percentagePopover";
+import CircularProgress from "@/components/ui/icons/circularProgressBar";
+import { BadgeCheck, MapPin, ReceiptText } from "@/components/ui/icons";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { VendorFeatures } from "../features/contractsObject"
-import VendorServicesModal from "./vendorServicesModal"
+} from "@/components/ui/tooltip";
+import { VendorFeatures } from "../features/contractsObject";
+import VendorServicesModal from "./vendorServicesModal";
 
 interface VendorResultDisplayCardProps {
-  vendorId: string
-  isSelected: boolean
-  onSelectVendor: (vendorId: string, isSelected: boolean) => void
-  vendorName: string
-  vendorLogo: string
-  vendorDesc: string
-  vendorLocation: string
-  vendorServices: VendorFeatures
-  vendorMatchPercentage: number
-  isVerified: boolean
-  estYr: number
-  selectedOptions: any // Add this to pass selectedOptions to PercentagePopover
+  vendorId: string;
+  isSelected: boolean;
+  onSelectVendor: (vendorId: string, isSelected: boolean) => void;
+  vendorName: string;
+  vendorLogo: string;
+  vendorDesc: string;
+  vendorLocation: string;
+  vendorServices: VendorFeatures;
+  vendorMatchPercentage: number;
+  isVerified: boolean;
+  estYr: number;
+  selectedOptions: any; // Add this to pass selectedOptions to PercentagePopover
 }
 
 const VendorResultDisplayCard = ({
@@ -45,21 +45,21 @@ const VendorResultDisplayCard = ({
   estYr,
   selectedOptions, // This prop is added for PercentagePopover
 }: VendorResultDisplayCardProps) => {
-  const router = useRouter()
+  const router = useRouter();
 
   const openVendorModal = (vendorId: string) => {
-    router.push(`/contracts/vendor/${vendorId}`)
-  }
+    router.push(`/vendor/${vendorId}`);
+  };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSelectVendor(vendorId, e.target.checked)
-  }
+    onSelectVendor(vendorId, e.target.checked);
+  };
 
-  const MAX_CHARACTERS_INLINE = 30
-  const mergedArray = Object.values(vendorServices).flat()
+  const MAX_CHARACTERS_INLINE = 30;
+  const mergedArray = Object.values(vendorServices).flat();
   const displayFeaturesInline =
     mergedArray.join(", ").slice(0, MAX_CHARACTERS_INLINE) +
-    (mergedArray.join(", ").length > MAX_CHARACTERS_INLINE ? "..." : "")
+    (mergedArray.join(", ").length > MAX_CHARACTERS_INLINE ? "..." : "");
 
   return (
     <div
@@ -129,7 +129,11 @@ const VendorResultDisplayCard = ({
               <p className={styles.textPrimary}>{vendorLocation}</p>
             </div>
 
-            <VendorServicesModal vendorServices={vendorServices} vendorLogo={vendorLogo} vendorName={vendorName}>
+            <VendorServicesModal
+              vendorServices={vendorServices}
+              vendorLogo={vendorLogo}
+              vendorName={vendorName}
+            >
               <div className="relative flex items-center gap-1">
                 <ReceiptText
                   className={`${styles.textGray} stroke-2`}
@@ -154,7 +158,7 @@ const VendorResultDisplayCard = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VendorResultDisplayCard
+export default VendorResultDisplayCard;

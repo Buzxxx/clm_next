@@ -1,22 +1,22 @@
 // File: /components/ui/StepUI.tsx
 
-import { MultiSelectCombobox } from "../ui/multiSelectComboBox"
-import { Button } from "@/components/ui/button"
-import styles from "@/app/contracts/contract.module.css"
+import { MultiSelectCombobox } from "../ui/multiSelectComboBox";
+import { Button } from "@/components/ui/button";
+import styles from "@/app/contract.module.css";
 import {
   defaultSelectedOptions,
   getInputFieldsForStep,
   SelectedOptions,
   toCamelCase,
-} from "./contractsObject"
-import { capabilities, contractTypes, organizationalFunctions } from "../noSql"
-import { Dispatch, SetStateAction } from "react"
+} from "./contractsObject";
+import { capabilities, contractTypes, organizationalFunctions } from "../noSql";
+import { Dispatch, SetStateAction } from "react";
 
 export interface StepUIProps {
-  activeTab: number
-  setActiveTab: Dispatch<SetStateAction<number>>
-  selectedItems: SelectedOptions
-  setSelectedOptions: Dispatch<SetStateAction<SelectedOptions>>
+  activeTab: number;
+  setActiveTab: Dispatch<SetStateAction<number>>;
+  selectedItems: SelectedOptions;
+  setSelectedOptions: Dispatch<SetStateAction<SelectedOptions>>;
 }
 
 const Step1: React.FC<StepUIProps> = ({
@@ -50,29 +50,29 @@ const Step1: React.FC<StepUIProps> = ({
       inputType: "multiSelect" as const,
       choices: contractTypes,
     },
-  ]
+  ];
 
   const onSelectItems = (title: keyof SelectedOptions, items: number[]) => {
     setSelectedOptions((prevSelected) =>
       prevSelected[title] === items
         ? { ...prevSelected }
         : { ...prevSelected, [title]: items }
-    )
-  }
+    );
+  };
 
   const handleNext = () => {
-    const inputFields = getInputFieldsForStep(activeTab)
-    const totalSteps = inputFields.length
+    const inputFields = getInputFieldsForStep(activeTab);
+    const totalSteps = inputFields.length;
 
     if (activeTab < totalSteps - 1) {
-      setActiveTab((prev) => prev + 1)
+      setActiveTab((prev) => prev + 1);
     }
-  }
+  };
 
   const handleReset = () => {
-    setActiveTab(0)
-    setSelectedOptions(defaultSelectedOptions)
-  }
+    setActiveTab(0);
+    setSelectedOptions(defaultSelectedOptions);
+  };
 
   return (
     <>
@@ -142,7 +142,7 @@ const Step1: React.FC<StepUIProps> = ({
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Step1
+export default Step1;

@@ -1,17 +1,17 @@
 // File: /components/ui/StepUI.tsx
 
-import { MultiSelectCombobox } from "../ui/multiSelectComboBox"
-import { Button } from "@/components/ui/button"
-import styles from "@/app/contracts/contract.module.css"
+import { MultiSelectCombobox } from "../ui/multiSelectComboBox";
+import { Button } from "@/components/ui/button";
+import styles from "@/app/contract.module.css";
 import {
   defaultSelectedOptions,
   getInputFieldsForStep,
   isSelectedOptionsEmpty,
   SelectedOptions,
   toCamelCase,
-} from "./contractsObject"
-import { integrations, licensingModels, regions } from "../noSql"
-import { StepUIProps } from "./step1"
+} from "./contractsObject";
+import { integrations, licensingModels, regions } from "../noSql";
+import { StepUIProps } from "./step1";
 
 const Step2: React.FC<StepUIProps> = ({
   activeTab,
@@ -42,28 +42,28 @@ const Step2: React.FC<StepUIProps> = ({
       inputType: "multiSelect" as const,
       choices: regions,
     },
-  ]
+  ];
   const onSelectItems = (title: keyof SelectedOptions, items: number[]) => {
     setSelectedOptions((prevSelected) =>
       prevSelected[title] === items
         ? { ...prevSelected }
         : { ...prevSelected, [title]: items }
-    )
-  }
+    );
+  };
 
   const handleNext = () => {
-    const inputFields = getInputFieldsForStep(activeTab)
-    const totalSteps = inputFields.length
+    const inputFields = getInputFieldsForStep(activeTab);
+    const totalSteps = inputFields.length;
 
     if (activeTab < totalSteps - 1) {
-      setActiveTab((prev) => prev + 1)
+      setActiveTab((prev) => prev + 1);
     }
-  }
+  };
 
   const handleReset = () => {
-    setActiveTab(0)
-    setSelectedOptions(defaultSelectedOptions)
-  }
+    setActiveTab(0);
+    setSelectedOptions(defaultSelectedOptions);
+  };
   return (
     <>
       <div className="flex flex-col gap-12 md:w-3/4 mx-auto  pb-20">
@@ -132,7 +132,7 @@ const Step2: React.FC<StepUIProps> = ({
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Step2
+export default Step2;
