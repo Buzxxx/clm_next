@@ -1,6 +1,6 @@
 // File: /components/ui/ContractsFilterUI.tsx
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -8,30 +8,30 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { Check, ChevronsUpDown } from "@/components/ui/icons"
-import { Label } from "@/components/ui/label"
-import styles from "@/app/contracts/contract.module.css"
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "@/components/ui/icons";
+import { Label } from "@/components/ui/label";
+import styles from "@/app/contract.module.css";
 import {
   getDisplayName,
   SelectedOptions,
   toCamelCase,
-} from "../features/contractsObject"
+} from "../features/contractsObject";
 
 interface ContractsFilterUIProps {
-  stepInputFields: { title: string; choices: { id: number; name: string }[] }[]
-  selectedChoices: SelectedOptions
-  openPopover: { [key: string]: boolean }
-  handleOpenChange: (stepTitle: string, isOpen: boolean) => void
+  stepInputFields: { title: string; choices: { id: number; name: string }[] }[];
+  selectedChoices: SelectedOptions;
+  openPopover: { [key: string]: boolean };
+  handleOpenChange: (stepTitle: string, isOpen: boolean) => void;
   handleCheckboxChange: (
     stepTitle: keyof SelectedOptions,
     choice: number
-  ) => void
+  ) => void;
 }
 
 const ContractsFilterUI: React.FC<ContractsFilterUIProps> = ({
@@ -138,7 +138,7 @@ const ContractsFilterUI: React.FC<ContractsFilterUIProps> = ({
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ContractsFilterUI
+export default ContractsFilterUI;

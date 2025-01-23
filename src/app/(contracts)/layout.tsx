@@ -1,7 +1,7 @@
 /**
  * @path src/app/contract/layout.tsx
  */
-import styles from "@/app/contracts/contract.module.css"
+import styles from "@/app/contract.module.css";
 export default function ContractsLayout({
   children,
   modal,
@@ -11,5 +11,5 @@ export default function ContractsLayout({
       {modal}
       {children}
     </div>
-  )
+  );
 }

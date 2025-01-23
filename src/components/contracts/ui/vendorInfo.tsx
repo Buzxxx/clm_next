@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import styles from "@/app/contracts/contract.module.css"
+import { useState } from "react";
+import Image from "next/image";
+import styles from "@/app/contract.module.css";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,15 +16,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Vendor } from "../features/contractsObject"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Vendor } from "../features/contractsObject";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
   email: z.string().email(),
   message: z.string().min(2),
-})
+});
 
 export const GeneralInfo = ({ vendor }: { vendor: Vendor }) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -34,12 +34,12 @@ export const GeneralInfo = ({ vendor }: { vendor: Vendor }) => {
       email: "",
       message: "",
     },
-  })
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    console.log(values);
   }
 
   const images = [
@@ -48,9 +48,9 @@ export const GeneralInfo = ({ vendor }: { vendor: Vendor }) => {
     { src: "/contracts/images/screenshot3.webp", alt: "Screenshot 3" },
     { src: "/contracts/images/screenshot4.webp", alt: "Screenshot 4" },
     { src: "/contracts/images/screenshot5.webp", alt: "Screenshot 5" },
-  ]
+  ];
 
-  const [showAll, setShowAll] = useState(false) // State to toggle full gallery
+  const [showAll, setShowAll] = useState(false); // State to toggle full gallery
 
   return (
     <div className="flex gap-4 md:flex-row flex-col">
@@ -102,8 +102,11 @@ export const GeneralInfo = ({ vendor }: { vendor: Vendor }) => {
               (including the auto-capture of 100s of metadata fields), and
               migrate them to a centralized repository. These contracts can then
               be easily interrogated for insights. <br /> <br />{" "}
-              {vendor.vendorName} offers advanced capabilities for tracking the embedded obligations and service levels till fulfilment and eventual renewal or expiration. This applies to new contracts authored in{" "}
-              {vendor.vendorName} as well as digitzed legacy contracts.
+              {vendor.vendorName} offers advanced capabilities for tracking the
+              embedded obligations and service levels till fulfilment and
+              eventual renewal or expiration. This applies to new contracts
+              authored in {vendor.vendorName} as well as digitzed legacy
+              contracts.
             </p>
           </div>
         </div>
@@ -223,5 +226,5 @@ export const GeneralInfo = ({ vendor }: { vendor: Vendor }) => {
         </p>
       </div>
     </div>
-  )
-}
+  );
+};

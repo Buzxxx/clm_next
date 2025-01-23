@@ -20,7 +20,7 @@ import {
 import SelectionDisplayBox from "./selectionDisplayBox";
 import Image from "next/image";
 
-import styles from "@/app/contracts/contract.module.css";
+import styles from "@/app/contract.module.css";
 import { getDisplayName, toCamelCase } from "../features/contractsObject";
 import { shimmer, toBase64 } from "@/components/ui/generateBlur";
 

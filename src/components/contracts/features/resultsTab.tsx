@@ -21,7 +21,7 @@ import { X } from "@/components/ui/icons";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useToast } from "@/components/ui/use-toast";
 
-import styles from "@/app/contracts/contract.module.css";
+import styles from "@/app/contract.module.css";
 import VendorCompareModal from "./vendorCompareModal";
 import { vendors } from "../noSql";
 

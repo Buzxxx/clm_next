@@ -1,31 +1,31 @@
-import React, { Dispatch, SetStateAction, useState } from "react"
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 
-import styles from "@/app/contracts/contract.module.css"
+import styles from "@/app/contract.module.css";
 
 // Mock data: Names of the input fields by step
 const inputFieldsForSteps: { [key: number]: string[] } = {
   0: ["Capabilities", "Organizational Functions", "Regions"],
   1: ["Contract Types", "Licensing Models", "Integrations"],
   2: ["See Results", "Compare Vendors "],
-}
+};
 
 interface ContractsHeaderTabProps {
-  activeStep: number
-  setActiveStep: Dispatch<SetStateAction<number>>
+  activeStep: number;
+  setActiveStep: Dispatch<SetStateAction<number>>;
 }
 
 const ContractsHeaderTab: React.FC<ContractsHeaderTabProps> = ({
   activeStep,
   setActiveStep,
 }) => {
-  const ContractSteps = ["Step 1", "Step 2", "Results"]
-  const [hoveredStep, setHoveredStep] = useState<number | null>(null)
+  const ContractSteps = ["Step 1", "Step 2", "Results"];
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
   return (
     <div className="flex justify-between items-center gap-4 md:w-3/4 mx-auto w-full px-4 mt-12 relative">
@@ -88,7 +88,7 @@ const ContractsHeaderTab: React.FC<ContractsHeaderTabProps> = ({
         </React.Fragment>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default ContractsHeaderTab
+export default ContractsHeaderTab;

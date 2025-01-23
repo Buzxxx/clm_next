@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { GeneralInfo } from "../ui/vendorInfo"
-import { vendors } from "../noSql"
-import styles from "@/app/contracts/contract.module.css"
-import { useParams } from "next/navigation"
+import Image from "next/image";
+import Link from "next/link";
+import { GeneralInfo } from "../ui/vendorInfo";
+import { vendors } from "../noSql";
+import styles from "@/app/contract.module.css";
+import { useParams } from "next/navigation";
 
 const VendorDetails = () => {
-  const params = useParams()
-  const id = params.vendorId?.toString()
-  const vendor = vendors.find((v) => v.id === id)
+  const params = useParams();
+  const id = params.vendorId?.toString();
+  const vendor = vendors.find((v) => v.id === id);
 
   if (!vendor) {
     // If vendor not found, display an error UI
@@ -24,7 +24,7 @@ const VendorDetails = () => {
           Go back to Home
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -60,7 +60,7 @@ const VendorDetails = () => {
         <GeneralInfo vendor={vendor} />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default VendorDetails
+export default VendorDetails;
