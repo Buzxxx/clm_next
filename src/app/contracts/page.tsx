@@ -1,7 +1,15 @@
-import React from "react";
+/**
+ * @path src/app/contract/page.tsx
+ */
 
-const page = () => {
-  return <div>Hello my name is avinash</div>;
+import { Metadata } from "next";
+import ContractsLayout from "@/components/contracts/layout/contractsLayout";
+
+export const metadata: Metadata = {
+  title: "Contract Lifecycle Management ",
+  description: "Manage your contracts efficiently.",
 };
 
-export default page;
+export default function Contracts() {
+  return <ContractsLayout />;
+}
