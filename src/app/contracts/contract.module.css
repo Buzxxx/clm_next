@@ -1,0 +1,111 @@
+.contractsLayout {
+	color: var(--text-primary);
+
+	--bg-primary: #f9f9f9;
+	--bg-secondary: #55679C;
+	--bg-tertiary: #7789afbf;
+	--clr-accent: #E1D7B7;
+	--clr-accent-muted: #DAD7D0;
+	--text-primary: #181C14;
+	--text-gray: #41444dda;
+	--text-white-primary: #F1F1F1;
+	--text-secondary: #55679C;
+	--text-muted: #B0B4C1;
+}
+
+.contractsLayout ::-webkit-scrollbar {
+	width: 0.5rem;
+}
+
+.contractsLayout ::-webkit-scrollbar-track {
+	opacity: 0.1;
+	background: var(--clr-accent-muted);
+	
+}
+
+.contractsLayout ::-webkit-scrollbar-thumb {
+	background: var(--text-muted);
+	border-radius: 20px;
+}
+
+.selectionDisplayBox::-webkit-scrollbar {
+	width: 0.25rem;
+}
+
+.textPrimary {
+	color: var(--text-primary);
+}
+
+.textWhitePrimary {
+	color: var(--text-white-primary);
+}
+
+.textSecondary {
+	color: var(--text-secondary);
+}
+
+.textMuted {
+	color: var(--text-muted);
+}
+
+.textGray {
+	color: var(--text-gray);
+}
+
+.textAccent {
+	color: var(--clr-accent);
+}
+
+.bgPrimary {
+	background-color: var(--bg-primary);
+}
+
+.bgSecondary {
+	background-color: var(--bg-secondary);
+}
+
+.bgTertiary {
+	background-color: var(--bg-tertiary);
+}
+
+.bgAccent {
+	background-color: var(--clr-accent);
+}
+
+.bgAccentMuted {
+	background-color: var(--clr-accent-muted);
+}
+
+.borderAccent {
+	border-color: var(--clr-accent);
+}
+
+.btnSecondary {
+	background-color: var(--bg-secondary);
+	color: var(--text-white-primary);
+	transition: all 0.3s ease-in-out;
+}
+
+.btnSecondary:hover {
+	background-color: var(--bg-tertiary);
+	color: var(--text-white-primary);
+}
+
+
+.vendorResultDisplayCard {
+	background-color: var(--bg-primary);
+	border: 1px solid transparent;
+	transition: all 0.3s ease-in-out;
+}
+
+.vendorResultDisplayCard:hover {
+	border: 1px solid var(--bg-tertiary);
+}
+
+.navSearch {
+	border-color: var(--text-gray);
+}
+
+.navSearch::placeholder {
+	color: var(--text-gray);
+}
