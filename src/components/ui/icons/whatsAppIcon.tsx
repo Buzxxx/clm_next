@@ -2,11 +2,12 @@ const WhatsAppIcon = ({
   className,
   color = "#FFFFFF",
 }: {
-  className?: string
-  color?: string
+  className?: string;
+  color?: string;
 }) => {
   return (
     <svg
+      className={className} // Apply the className prop here
       xmlns="http://www.w3.org/2000/svg"
       width="18"
       height="18"
@@ -24,7 +25,7 @@ const WhatsAppIcon = ({
         transform="scale(7.5)"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
-export default WhatsAppIcon
+export default WhatsAppIcon;

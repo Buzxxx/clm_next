@@ -2,8 +2,10 @@
  *  @path src/components/ui/CircularProgress.tsx
  */
 
-import React from "react"
-import colors from "tailwindcss/colors"
+"use client";
+
+import { useEffect, useState, FC } from "react";
+import colors from "tailwindcss/colors";
 
 /**
  * Get color based on percentage using Tailwind CSS colors
@@ -11,50 +13,55 @@ import colors from "tailwindcss/colors"
  * @returns {string} Color value
  */
 const getColor = (percentage: number): string => {
-  if (percentage <= 25) return colors.red[500]
-  if (percentage <= 50) return colors.yellow[500]
-  if (percentage <= 75) return colors.blue[500]
-  return colors.green[500]
-}
+  if (percentage <= 25) return colors.red[500];
+  if (percentage <= 50) return colors.yellow[500];
+  if (percentage <= 75) return colors.blue[500];
+  return colors.green[500];
+};
+
+/**
+ * Props for CircularProgress component
+ */
+type CircularProgressProps = {
+  percentage: number;
+  size?: number;
+  strokeWidth?: number;
+  animation?: boolean;
+  dynamicColors?: boolean;
+  color?: string;
+};
 
 /**
  * Render a circular progress bar with a percentage, dynamic color, and animation control
- * @param {{ percentage: number, size?: number, strokeWidth?: number, animation?: boolean, dynamicColors?: boolean, color?: string }} props
- * @returns {JSX.Element}
  */
-const CircularProgress = ({
+const CircularProgress: FC<CircularProgressProps> = ({
   percentage,
   size = 40,
   strokeWidth = 4,
   animation = true,
   dynamicColors = true,
   color = "#4caf50",
-}: {
-  percentage: number
-  size?: number
-  strokeWidth?: number
-  animation?: boolean
-  dynamicColors?: boolean
-  color?: string
-}): JSX.Element => {
-  const [animatedPercentage, setAnimatedPercentage] = React.useState(0)
+}) => {
+  const [animatedPercentage, setAnimatedPercentage] = useState<number>(0);
 
-  React.useEffect(() => {
-    if (animation) {
-      setAnimatedPercentage(percentage)
-    } else {
-      setAnimatedPercentage(percentage)
-    }
-  }, [percentage, animation])
+  useEffect(() => {
+    setAnimatedPercentage(percentage);
+  }, [percentage]);
 
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (animatedPercentage / 100) * circumference
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (animatedPercentage / 100) * circumference;
 
-  const strokeColor = dynamicColors ? getColor(percentage) : color
+  const strokeColor = dynamicColors ? getColor(percentage) : color;
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      aria-label={`Progress: ${percentage}%`}
+    >
+      {/* Background circle */}
       <circle
         stroke="#e6e6e6"
         fill="transparent"
@@ -63,6 +70,7 @@ const CircularProgress = ({
         cx={size / 2}
         cy={size / 2}
       />
+      {/* Foreground circle */}
       <circle
         stroke={strokeColor}
         fill="transparent"
@@ -79,6 +87,7 @@ const CircularProgress = ({
             : "none",
         }}
       />
+      {/* Percentage text */}
       <text
         x="50%"
         y="50%"
@@ -91,7 +100,7 @@ const CircularProgress = ({
         {`${percentage}%`}
       </text>
     </svg>
-  )
-}
+  );
+};
 
-export default CircularProgress
+export default CircularProgress;
