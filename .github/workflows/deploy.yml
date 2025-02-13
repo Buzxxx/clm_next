@@ -23,11 +23,19 @@ jobs:
           npm install
           npm run build
 
-      - name: Debug - List Build Output
+      - name: Debug - Verify File Paths Before Deployment
         run: |
-          echo "Checking Next.js build output..."
+          echo "Checking if required files exist before SCP deployment..."
+          echo "Listing root directory:"
+          ls -la
+          echo "Listing .next directory:"
           ls -la .next || echo "Error: .next directory not found"
+          echo "Listing .next/standalone directory:"
           ls -la .next/standalone || echo "Error: .next/standalone directory not found"
+          echo "Listing .next/static directory:"
+          ls -la .next/static || echo "Error: .next/static directory not found"
+          echo "Listing public directory:"
+          ls -la public || echo "Error: public directory not found"
 
       - name: Deploy Build Files to VM
         if: success() # Only deploy if the build is successful
