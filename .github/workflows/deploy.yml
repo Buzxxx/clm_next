@@ -1,4 +1,4 @@
-name: Deploy Next.js App
+name: Deploy Next.js to VM
 
 on:
   push:
@@ -10,29 +10,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "lts/*"
+          node-version: 18
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies and build Next.js
+        run: |
+          cd CLM_next
+          npm install
+          npm run build
 
-      - name: Build Application
-        run: npm run build
-
-      - name: Deploy to Azure VM via SSH
-        uses: appleboy/ssh-action@v0.1.10
+      - name: Deploy Build Files to VM
+        uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.AZURE_VM_IP }} # Add your VM IP as a GitHub secret
-          username: gnelson # Your Azure VM username
-          key: ${{ secrets.SSH_PRIVATE_KEY }} # SSH private key stored in GitHub Secrets
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: |
+            CLM_next/package.json,
+            CLM_next/package-lock.json,
+            CLM_next/.next/standalone,
+            CLM_next/.next/static,
+            CLM_next/public
+          target: "/home/gnelson/deployments/clm_next"
+          strip_components: 2
+
+      - name: Restart Next.js Service
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            cd ~/projects/nextjs-app/clm_next
-            git pull origin main
-            npm install
-            npm run build
-            pm2 restart clm_next || pm2 start npm --name "clm_next" -- start
+            cd ~/deployments
+            docker compose up -d --build clm_next

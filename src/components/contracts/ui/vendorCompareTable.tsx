@@ -1,19 +1,19 @@
-import React, { useState } from "react"
-import Image from "next/image"
+import React, { useState } from "react";
+import Image from "next/image";
 import {
   SelectedOptions,
   filterSelectedOptions,
   getDisplayName,
   Vendor,
   camelCaseToLowercase,
-} from "@/components/contracts/features/contractsObject"
+} from "@/components/contracts/features/contractsObject";
 import {
   Download,
   CircularProgress,
   ChevronDown,
   Check,
   X,
-} from "@/components/ui/icons"
+} from "@/components/ui/icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +21,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 import {
   Table,
@@ -30,34 +30,34 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import styles from "@/app/contracts/contract.module.css"
-import { DownloadDropDown } from "./downloadDropDown"
+} from "@/components/ui/table";
+import styles from "@/app/contracts/contract.module.css";
+import { DownloadDropDown } from "./downloadDropDown";
 
 const VendorCompareTable = ({
   selectedOptions,
   vendorComparisonData,
 }: {
-  selectedOptions: SelectedOptions
-  vendorComparisonData: any
+  selectedOptions: SelectedOptions;
+  vendorComparisonData: any;
 }) => {
-  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set())
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
 
-  const filteredSelectedOptions = filterSelectedOptions(selectedOptions)
-  const filteredSelectedOptionsKeys = Object.keys(filteredSelectedOptions)
+  const filteredSelectedOptions = filterSelectedOptions(selectedOptions);
+  const filteredSelectedOptionsKeys = Object.keys(filteredSelectedOptions);
 
   // Toggle accordion for categories
   const toggleAccordion = (category: string) => {
     setOpenCategories((prev) => {
-      const newCategories = new Set(prev)
+      const newCategories = new Set(prev);
       if (newCategories.has(category)) {
-        newCategories.delete(category)
+        newCategories.delete(category);
       } else {
-        newCategories.add(category)
+        newCategories.add(category);
       }
-      return newCategories
-    })
-  }
+      return newCategories;
+    });
+  };
 
   return (
     <Table className=" w-full  static overflow-hidden ">
@@ -92,7 +92,7 @@ const VendorCompareTable = ({
 
       <TableBody className="h-full overflow-auto">
         {filteredSelectedOptionsKeys.map((key) => {
-          const isOpen = openCategories.has(key)
+          const isOpen = openCategories.has(key);
 
           return (
             <React.Fragment key={key}>
@@ -147,7 +147,7 @@ const VendorCompareTable = ({
                     >
                       {filteredSelectedOptions[key].map((item: number) => {
                         const vendorCategoryValues =
-                          vendor.breakdown[key]?.breakdown || []
+                          vendor.breakdown[key]?.breakdown || [];
                         return (
                           <div key={item} className="mb-2">
                             {vendorCategoryValues[item] ? (
@@ -156,18 +156,18 @@ const VendorCompareTable = ({
                               <X color="red" size={18} />
                             )}
                           </div>
-                        )
+                        );
                       })}
                     </TableCell>
                   ))}
                 </TableRow>
               )}
             </React.Fragment>
-          )
+          );
         })}
       </TableBody>
     </Table>
-  )
-}
+  );
+};
 
-export default VendorCompareTable
+export default VendorCompareTable;
