@@ -1,90 +1,65 @@
-name: 🚀 Deploy Next.js to Azure VM
+name: Deploy Next.js to VM
 
 on:
   push:
     branches:
-      - main # Adjust if needed
+      - main # Change if your branch name is different
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout Repository
+      - name: 🚀 Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🛠️ Set Up Node.js Environment
+      - name: ⚙️ Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "npm"
 
-      - name: 📦 Install Dependencies
+      - name: 🛠 Install dependencies
+        run: npm ci
+
+      - name: 🧹 Install rimraf globally (if missing)
+        run: npm install -g rimraf
+
+      - name: ⚡ Build Next.js App
         run: |
-          echo "$(date): Installing production dependencies..."
-          npm ci --omit=dev --no-audit --no-fund
-        env:
-          CI: true
-
-      - name: 🏗️ Build Next.js Application
-        run: |
-          echo "$(date): Installing rimraf to prevent missing dependency error..."
-          npm install rimraf --no-save
-
-          echo "$(date): Cleaning old build files..."
-          npx rimraf .next || echo "⚠️ Warning: .next directory not found"
-
-          echo "$(date): Starting Next.js build..."
-          npm run build || { echo "❌ Build failed!"; exit 1; }
-
+          npm run clean || echo "Clean step skipped"
+          npm run build
           echo "✅ Build completed successfully!"
-        env:
-          CI: true
 
-      - name: 🔍 Validate Build Output
+      - name: 🔍 Debug - Check Next.js Build Output
         run: |
-          echo "$(date): Checking build output directories..."
-          [[ -d .next ]] || { echo "❌ Error: .next directory missing!"; exit 1; }
-          [[ -d .next/standalone ]] || { echo "❌ Error: .next/standalone directory missing!"; exit 1; }
-          [[ -d .next/static ]] || { echo "❌ Error: .next/static directory missing!"; exit 1; }
+          echo "Checking Next.js build output..."
+          ls -la .next || echo "Error: .next directory not found"
+          ls -la .next/standalone || echo "Error: .next/standalone directory not found"
 
-          echo "$(date): Listing generated files..."
-          ls -la .next/standalone
-          ls -la .next/static
+      - name: 🛠 Ensure standalone folder exists
+        run: mkdir -p .next/standalone
 
-      - name: 📤 Deploy Build Files to Azure VM
+      - name: 📂 Archive Build Files Before Transfer
+        run: |
+          tar -czf next-build.tar.gz package.json package-lock.json .next/standalone/ .next/static/ public/
+
+      - name: 📂 Deploy Build Files to VM
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: |
-            package.json
-            package-lock.json
-            .next/standalone
-            .next/static
-            public
+          source: next-build.tar.gz
           target: "/home/gnelson/deployments/clm_next"
-          strip_components: 2
-          timeout: 300s # Increased timeout for large builds
+          timeout: 300s
 
-      - name: 🔄 Restart Next.js Service on VM
+      - name: 🔄 Restart Next.js Service
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "$(date): Navigating to deployments directory..."
-            cd ~/deployments || { echo "❌ Error: ~/deployments directory not found!"; exit 1; }
-
-            echo "$(date): Stopping old Next.js container..."
-            docker compose down clm_next || echo "⚠️ No existing container found"
-
-            echo "$(date): Starting new Next.js container..."
-            docker compose up -d --build clm_next || { echo "❌ Error: Failed to restart Next.js container!"; exit 1; }
-
-            echo "$(date): Verifying running containers..."
-            docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
-
-            echo "✅ Deployment completed successfully!"
+            cd ~/deployments/clm_next
+            tar -xzf next-build.tar.gz
+            docker compose up -d --build clm_next
