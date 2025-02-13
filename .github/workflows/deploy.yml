@@ -27,7 +27,7 @@ jobs:
       - name: 🔍 Debug - List Files Before Build
         run: |
           ls -la src/components/contracts/layout/
-          ls -la src/app/(contracts)/
+          ls -la "src/app/(contracts)/"
 
       - name: ⚡ Build Next.js App
         run: |
