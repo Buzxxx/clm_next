@@ -67,5 +67,5 @@ jobs:
             echo "Extracting Next.js build files..."
             tar -xzf clm_next/next-build.tar.gz -C clm_next
             echo "Restarting Next.js container..."
-            docker compose up -d --build clm_next
+            docker compose up -d --build --no-deps clm_next
             echo "Deployment complete!"
