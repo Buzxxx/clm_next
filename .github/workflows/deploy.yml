@@ -1,66 +1,63 @@
-name: Deploy Next.js to VM
+name: Deploy Next.js to Azure VM
 
 on:
   push:
     branches:
-      - main # Change if your branch name is different
+      - main # Adjust if using a different branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: 📥 Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: 🛠️ Set Up Node.js & Install Dependencies
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: "npm"
 
-      - name: Install dependencies and build Next.js
+      - name: ⚡ Build Next.js App
         run: |
-          npm install
+          npm ci --omit=dev  # Install only production dependencies
           npm run build
+          echo "Build completed successfully!"
 
-      - name: Debug - Verify File Paths Before Deployment
+      - name: 📂 Debug - Verify Build Output
         run: |
-          echo "Checking if required files exist before SCP deployment..."
-          echo "Listing root directory:"
-          ls -la
-          echo "Listing .next directory:"
+          echo "Checking Next.js build output..."
           ls -la .next || echo "Error: .next directory not found"
-          echo "Listing .next/standalone directory:"
           ls -la .next/standalone || echo "Error: .next/standalone directory not found"
-          echo "Listing .next/static directory:"
           ls -la .next/static || echo "Error: .next/static directory not found"
-          echo "Listing public directory:"
-          ls -la public || echo "Error: public directory not found"
 
-      - name: Deploy Build Files to VM
-        if: success()
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.AZURE_VM_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: >
-            package.json
-            package-lock.json
-            .next/standalone/server.js
-            .next/standalone/package.json
-            .next/static/*
-            public/*
-          target: "/home/gnelson/deployments/clm_next"
-          strip_components: 2
-
-      - name: Restart Next.js Service
-        if: success()
+      - name: 🚀 Deploy Build Files to VM via Rsync (Reliable Transfer)
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e  # Stop on error
+            echo "Preparing deployment directory..."
+            mkdir -p ~/deployments/clm_next/build
+
+      - name: 📤 Sync Build Files to VM
+        run: |
+          rsync -avz --progress \
+            package.json package-lock.json \
+            .next/standalone/server.js .next/standalone/package.json \
+            .next/static public \
+            ${{ secrets.SSH_USER }}@${{ secrets.AZURE_VM_IP }}:/home/gnelson/deployments/clm_next/build/
+
+      - name: 🔄 Restart Next.js Container
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "Restarting Next.js service..."
             cd ~/deployments
             docker compose up -d --build clm_next
