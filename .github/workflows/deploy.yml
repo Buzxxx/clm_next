@@ -47,9 +47,10 @@ jobs:
           source: |
             package.json
             package-lock.json
-            .next/standalone/*
-            .next/static/*
-            public/*
+            .next/standalone/server.js
+            .next/standalone/package.json
+            .next/static
+            public
           target: "/home/gnelson/deployments/clm_next"
           strip_components: 2
 
