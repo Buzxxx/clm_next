@@ -60,6 +60,12 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/deployments/clm_next
-            tar -xzf next-build.tar.gz
+            cd ~/deployments  # ✅ Correct directory where docker-compose.yml is present
+            echo "Removing old Next.js container..."
+            docker stop clm_next || true
+            docker rm clm_next || true
+            echo "Extracting Next.js build files..."
+            tar -xzf clm_next/next-build.tar.gz -C clm_next
+            echo "Restarting Next.js container..."
             docker compose up -d --build clm_next
+            echo "Deployment complete!"
