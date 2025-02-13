@@ -3,7 +3,7 @@ name: Deploy Next.js to VM
 on:
   push:
     branches:
-      - main # Adjust if needed
+      - main # Change if your branch name is different
 
 jobs:
   deploy:
@@ -19,38 +19,31 @@ jobs:
           node-version: 18
 
       - name: 🛠 Install dependencies
-        run: |
-          echo "📦 Installing dependencies..."
-          npm ci --omit=dev || { echo "❌ Dependency installation failed!"; exit 1; }
-          echo "✅ Dependencies installed!"
+        run: npm ci --omit=dev # Install only production dependencies
 
-      - name: 🔍 Debug - Check Next.js CLI
-        run: |
-          echo "🔎 Checking if Next.js CLI is installed..."
-          npx next --version || { echo "❌ Next.js CLI not found!"; exit 1; }
-          echo "✅ Next.js CLI found!"
+      - name: 🛠 Ensure rimraf is available
+        run: npm install rimraf --save-dev # Ensure rimraf is installed locally
 
       - name: ⚡ Build Next.js App
         run: |
           echo "🚀 Cleaning old builds..."
-          rm -rf .next
-          npm run clean || echo "ℹ️ Clean step skipped"
-          echo "🚀 Starting Next.js build..."
-          npm run build || { echo "❌ Build failed!"; exit 1; }
-          echo "✅ Build completed successfully!"
+          npx rimraf .next || echo "Clean step skipped"
 
-      - name: 🔍 Verify Build Output
+          echo "🚀 Starting Next.js build..."
+          npm run build || (echo "❌ Build failed!" && exit 1)
+
+      - name: 🔍 Debug - Verify Build Output
         run: |
           echo "🔍 Checking Next.js build directories..."
-          [[ -d .next ]] && echo "✅ .next exists" || { echo "❌ .next directory not found!"; exit 1; }
-          [[ -d .next/standalone ]] && echo "✅ .next/standalone exists" || { echo "❌ .next/standalone missing!"; exit 1; }
-          [[ -d .next/static ]] && echo "✅ .next/static exists" || { echo "❌ .next/static missing!"; exit 1; }
+          ls -la .next || echo "❌ Error: .next directory not found"
+          ls -la .next/standalone || echo "❌ Error: .next/standalone directory not found"
+          ls -la .next/static || echo "❌ Error: .next/static directory not found"
 
-      - name: 📂 Archive Build Files
+      - name: 📂 Archive Build Files Before Transfer
         run: |
-          echo "📦 Creating build archive..."
-          tar -czf next-build.tar.gz package.json package-lock.json .next/standalone .next/static public
-          echo "✅ Archive created successfully!"
+          echo "📦 Packaging build files..."
+          tar --exclude='node_modules' --exclude='.git' -czf next-build.tar.gz *
+          echo "✅ Archive created: next-build.tar.gz"
 
       - name: 📂 Deploy Build Files to VM
         uses: appleboy/scp-action@v0.1.4
@@ -71,20 +64,26 @@ jobs:
           script: |
             set -e  # Exit immediately if any command fails
 
-            echo "🛠 Switching to deployment directory..."
-            cd ~/deployments/clm_next
+            echo "🛠 Checking if Docker is running..."
+            systemctl is-active --quiet docker || (echo "❌ Docker is not running!" && exit 1)
 
-            echo "📦 Extracting new build files..."
-            tar -xzf next-build.tar.gz
+            echo "🛠 Switching to deployment directory..."
+            cd ~/deployments
 
             echo "🛠 Checking if Next.js container is running..."
             if docker ps --filter "name=clm_next" --format '{{.Names}}' | grep -q clm_next; then
-              echo "✅ Next.js container is running, restarting..."
-              docker restart clm_next
+              echo "✅ Next.js container is running, stopping it..."
+              docker stop clm_next
+              docker rm clm_next
             else
-              echo "🚀 Starting Next.js container..."
-              docker compose up -d --build --no-deps clm_next
+              echo "ℹ️ Next.js container is not running, proceeding..."
             fi
+
+            echo "📦 Extracting new build files..."
+            tar -xzf clm_next/next-build.tar.gz -C clm_next
+
+            echo "🚀 Restarting Next.js container..."
+            docker compose up -d --build --no-deps clm_next || (echo "❌ Docker Compose failed!" && exit 1)
 
             echo "✅ Deployment complete!"
 
