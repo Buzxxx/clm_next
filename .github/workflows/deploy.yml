@@ -24,9 +24,15 @@ jobs:
       - name: 🧹 Ensure rimraf is available
         run: npm install -g rimraf || echo "rimraf already installed"
 
+      - name: 🔍 Debug - List Files Before Build
+        run: |
+          ls -la src/components/contracts/layout/
+          ls -la src/app/(contracts)/
+
       - name: ⚡ Build Next.js App
         run: |
           echo "🚀 Cleaning old builds..."
+          rm -rf node_modules .next package-lock.json
           npm run clean || echo "Clean step skipped"
           echo "🚀 Starting Next.js build..."
           npm run build
