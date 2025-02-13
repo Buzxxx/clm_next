@@ -19,29 +19,34 @@ jobs:
           node-version: 18
 
       - name: 🛠 Install dependencies
-        run: npm ci
+        run: npm ci --omit=dev # Install only production dependencies
 
-      - name: 🧹 Install rimraf globally (if missing)
-        run: npm install -g rimraf
+      - name: 🧹 Ensure rimraf is available
+        run: npm install -g rimraf || echo "rimraf already installed"
 
       - name: ⚡ Build Next.js App
         run: |
+          echo "🚀 Cleaning old builds..."
           npm run clean || echo "Clean step skipped"
+          echo "🚀 Starting Next.js build..."
           npm run build
           echo "✅ Build completed successfully!"
 
-      - name: 🔍 Debug - Check Next.js Build Output
+      - name: 🔍 Debug - Verify Build Output
         run: |
-          echo "Checking Next.js build output..."
-          ls -la .next || echo "Error: .next directory not found"
-          ls -la .next/standalone || echo "Error: .next/standalone directory not found"
+          echo "🔍 Checking Next.js build directories..."
+          ls -la .next || echo "❌ Error: .next directory not found"
+          ls -la .next/standalone || echo "❌ Error: .next/standalone directory not found"
+          ls -la .next/static || echo "❌ Error: .next/static directory not found"
 
-      - name: 🛠 Ensure standalone folder exists
-        run: mkdir -p .next/standalone
+      - name: 🛠 Ensure required directories exist
+        run: mkdir -p .next/standalone .next/static public
 
       - name: 📂 Archive Build Files Before Transfer
         run: |
-          tar -czf next-build.tar.gz package.json package-lock.json .next/standalone/ .next/static/ public/
+          echo "📦 Packaging build files..."
+          tar -czf next-build.tar.gz package.json package-lock.json .next/standalone .next/static public
+          echo "✅ Archive created: next-build.tar.gz"
 
       - name: 📂 Deploy Build Files to VM
         uses: appleboy/scp-action@v0.1.4
@@ -60,12 +65,39 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/deployments  # ✅ Correct directory where docker-compose.yml is present
-            echo "Removing old Next.js container..."
-            docker stop clm_next || true
-            docker rm clm_next || true
-            echo "Extracting Next.js build files..."
+            set -e  # Exit immediately if any command fails
+
+            echo "🛠 Switching to deployment directory..."
+            cd ~/deployments
+
+            echo "🛠 Checking if Next.js container is running..."
+            if docker ps --filter "name=clm_next" --format '{{.Names}}' | grep -q clm_next; then
+              echo "✅ Next.js container is running, stopping it..."
+              docker stop clm_next
+              docker rm clm_next
+            else
+              echo "ℹ️ Next.js container is not running, proceeding..."
+            fi
+
+            echo "📦 Extracting new build files..."
             tar -xzf clm_next/next-build.tar.gz -C clm_next
-            echo "Restarting Next.js container..."
+
+            echo "🚀 Restarting Next.js container..."
             docker compose up -d --build --no-deps clm_next
-            echo "Deployment complete!"
+
+            echo "✅ Deployment complete!"
+
+      - name: 🔍 Validate Deployment
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🔍 Checking if Next.js is running..."
+            if docker ps --filter "name=clm_next" --format '{{.Names}}' | grep -q clm_next; then
+              echo "✅ Next.js is running successfully!"
+            else
+              echo "❌ Next.js failed to start!" >&2
+              exit 1
+            fi
