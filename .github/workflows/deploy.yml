@@ -3,7 +3,7 @@ name: Deploy Next.js to VM
 on:
   push:
     branches:
-      - main # Change if your branch name is different
+      - main # Adjust if needed
 
 jobs:
   deploy:
@@ -19,40 +19,38 @@ jobs:
           node-version: 18
 
       - name: 🛠 Install dependencies
-        run: npm ci --omit=dev # Install only production dependencies
-
-      - name: 🧹 Ensure rimraf is available
-        run: npm install -g rimraf || echo "rimraf already installed"
-
-      - name: 🔍 Debug - List Files Before Build
         run: |
-          ls -la src/components/contracts/layout/
-          ls -la "src/app/(contracts)/"
+          echo "📦 Installing dependencies..."
+          npm ci --omit=dev || { echo "❌ Dependency installation failed!"; exit 1; }
+          echo "✅ Dependencies installed!"
+
+      - name: 🔍 Debug - Check Next.js CLI
+        run: |
+          echo "🔎 Checking if Next.js CLI is installed..."
+          npx next --version || { echo "❌ Next.js CLI not found!"; exit 1; }
+          echo "✅ Next.js CLI found!"
 
       - name: ⚡ Build Next.js App
         run: |
           echo "🚀 Cleaning old builds..."
-          rm -rf node_modules .next package-lock.json
-          npm run clean || echo "Clean step skipped"
+          rm -rf .next
+          npm run clean || echo "ℹ️ Clean step skipped"
           echo "🚀 Starting Next.js build..."
-          npm run build
+          npm run build || { echo "❌ Build failed!"; exit 1; }
           echo "✅ Build completed successfully!"
 
-      - name: 🔍 Debug - Verify Build Output
+      - name: 🔍 Verify Build Output
         run: |
           echo "🔍 Checking Next.js build directories..."
-          ls -la .next || echo "❌ Error: .next directory not found"
-          ls -la .next/standalone || echo "❌ Error: .next/standalone directory not found"
-          ls -la .next/static || echo "❌ Error: .next/static directory not found"
+          [[ -d .next ]] && echo "✅ .next exists" || { echo "❌ .next directory not found!"; exit 1; }
+          [[ -d .next/standalone ]] && echo "✅ .next/standalone exists" || { echo "❌ .next/standalone missing!"; exit 1; }
+          [[ -d .next/static ]] && echo "✅ .next/static exists" || { echo "❌ .next/static missing!"; exit 1; }
 
-      - name: 🛠 Ensure required directories exist
-        run: mkdir -p .next/standalone .next/static public
-
-      - name: 📂 Archive Build Files Before Transfer
+      - name: 📂 Archive Build Files
         run: |
-          echo "📦 Packaging build files..."
+          echo "📦 Creating build archive..."
           tar -czf next-build.tar.gz package.json package-lock.json .next/standalone .next/static public
-          echo "✅ Archive created: next-build.tar.gz"
+          echo "✅ Archive created successfully!"
 
       - name: 📂 Deploy Build Files to VM
         uses: appleboy/scp-action@v0.1.4
@@ -74,22 +72,19 @@ jobs:
             set -e  # Exit immediately if any command fails
 
             echo "🛠 Switching to deployment directory..."
-            cd ~/deployments
+            cd ~/deployments/clm_next
+
+            echo "📦 Extracting new build files..."
+            tar -xzf next-build.tar.gz
 
             echo "🛠 Checking if Next.js container is running..."
             if docker ps --filter "name=clm_next" --format '{{.Names}}' | grep -q clm_next; then
-              echo "✅ Next.js container is running, stopping it..."
-              docker stop clm_next
-              docker rm clm_next
+              echo "✅ Next.js container is running, restarting..."
+              docker restart clm_next
             else
-              echo "ℹ️ Next.js container is not running, proceeding..."
+              echo "🚀 Starting Next.js container..."
+              docker compose up -d --build --no-deps clm_next
             fi
-
-            echo "📦 Extracting new build files..."
-            tar -xzf clm_next/next-build.tar.gz -C clm_next
-
-            echo "🚀 Restarting Next.js container..."
-            docker compose up -d --build --no-deps clm_next
 
             echo "✅ Deployment complete!"
 
