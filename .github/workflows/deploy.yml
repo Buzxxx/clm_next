@@ -3,7 +3,7 @@ name: Deploy Next.js to VM
 on:
   push:
     branches:
-      - main
+      - main # Change if your branch name is different
 
 jobs:
   deploy:
@@ -27,9 +27,9 @@ jobs:
       - name: Deploy Build Files to VM
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: |
             CLM_next/package.json,
             CLM_next/package-lock.json,
@@ -42,9 +42,9 @@ jobs:
       - name: Restart Next.js Service
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/deployments
             docker compose up -d --build clm_next
