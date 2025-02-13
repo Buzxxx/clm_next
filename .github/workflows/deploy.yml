@@ -23,22 +23,30 @@ jobs:
           npm install
           npm run build
 
+      - name: Debug - List Build Output
+        run: |
+          echo "Checking Next.js build output..."
+          ls -la .next || echo "Error: .next directory not found"
+          ls -la .next/standalone || echo "Error: .next/standalone directory not found"
+
       - name: Deploy Build Files to VM
+        if: success() # Only deploy if the build is successful
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: |
-            CLM_next/package.json,
-            CLM_next/package-lock.json,
-            CLM_next/.next/standalone,
-            CLM_next/.next/static,
-            CLM_next/public
+            package.json
+            package-lock.json
+            .next/standalone
+            .next/static
+            public
           target: "/home/gnelson/deployments/clm_next"
           strip_components: 2
 
       - name: Restart Next.js Service
+        if: success()
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.AZURE_VM_IP }}
