@@ -1,68 +1,90 @@
-name: Deploy Next.js to Azure VM
+name: 🚀 Deploy Next.js to Azure VM
 
 on:
   push:
     branches:
-      - main # Adjust if using a different branch
+      - main # Adjust if needed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout Code
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🛠️ Set Up Node.js & Install Dependencies
+      - name: 🛠️ Set Up Node.js Environment
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: "npm"
 
+      - name: 📦 Install Dependencies
+        run: |
+          echo "$(date): Installing production dependencies..."
+          npm ci --omit=dev --no-audit --no-fund
+        env:
+          CI: true
+
       - name: 🏗️ Build Next.js Application
         run: |
-          echo "Installing production dependencies..."
-          npm ci --omit=dev
+          echo "$(date): Installing rimraf to prevent missing dependency error..."
+          npm install rimraf --no-save
 
-          echo "Starting Next.js build..."
-          npx rimraf .next  # Ensures a clean build directory
-          npm run build
+          echo "$(date): Cleaning old build files..."
+          npx rimraf .next || echo "⚠️ Warning: .next directory not found"
+
+          echo "$(date): Starting Next.js build..."
+          npm run build || { echo "❌ Build failed!"; exit 1; }
 
           echo "✅ Build completed successfully!"
+        env:
+          CI: true
 
-      - name: 📂 Debug - Verify Build Output
+      - name: 🔍 Validate Build Output
         run: |
-          echo "Checking Next.js build output..."
-          ls -la .next || echo "Error: .next directory not found"
-          ls -la .next/standalone || echo "Error: .next/standalone directory not found"
-          ls -la .next/static || echo "Error: .next/static directory not found"
+          echo "$(date): Checking build output directories..."
+          [[ -d .next ]] || { echo "❌ Error: .next directory missing!"; exit 1; }
+          [[ -d .next/standalone ]] || { echo "❌ Error: .next/standalone directory missing!"; exit 1; }
+          [[ -d .next/static ]] || { echo "❌ Error: .next/static directory missing!"; exit 1; }
 
-      - name: 🚀 Deploy Build Files to VM via Rsync (Reliable Transfer)
+          echo "$(date): Listing generated files..."
+          ls -la .next/standalone
+          ls -la .next/static
+
+      - name: 📤 Deploy Build Files to Azure VM
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.AZURE_VM_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: |
+            package.json
+            package-lock.json
+            .next/standalone
+            .next/static
+            public
+          target: "/home/gnelson/deployments/clm_next"
+          strip_components: 2
+          timeout: 300s # Increased timeout for large builds
+
+      - name: 🔄 Restart Next.js Service on VM
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.AZURE_VM_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e  # Stop on error
-            echo "Preparing deployment directory..."
-            mkdir -p ~/deployments/clm_next/build
+            echo "$(date): Navigating to deployments directory..."
+            cd ~/deployments || { echo "❌ Error: ~/deployments directory not found!"; exit 1; }
 
-      - name: 📤 Sync Build Files to VM
-        run: |
-          rsync -avz --progress \
-            package.json package-lock.json \
-            .next/standalone/server.js .next/standalone/package.json \
-            .next/static public \
-            ${{ secrets.SSH_USER }}@${{ secrets.AZURE_VM_IP }}:/home/gnelson/deployments/clm_next/build/
+            echo "$(date): Stopping old Next.js container..."
+            docker compose down clm_next || echo "⚠️ No existing container found"
 
-      - name: 🔄 Restart Next.js Container
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.AZURE_VM_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            echo "Restarting Next.js service..."
-            cd ~/deployments
-            docker compose up -d --build clm_next
+            echo "$(date): Starting new Next.js container..."
+            docker compose up -d --build clm_next || { echo "❌ Error: Failed to restart Next.js container!"; exit 1; }
+
+            echo "$(date): Verifying running containers..."
+            docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}"
+
+            echo "✅ Deployment completed successfully!"
