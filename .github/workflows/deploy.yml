@@ -19,11 +19,16 @@ jobs:
           node-version: 18
           cache: "npm"
 
-      - name: ⚡ Build Next.js App
+      - name: 🏗️ Build Next.js Application
         run: |
-          npm ci --omit=dev  # Install only production dependencies
+          echo "Installing production dependencies..."
+          npm ci --omit=dev
+
+          echo "Starting Next.js build..."
+          npx rimraf .next  # Ensures a clean build directory
           npm run build
-          echo "Build completed successfully!"
+
+          echo "✅ Build completed successfully!"
 
       - name: 📂 Debug - Verify Build Output
         run: |
