@@ -20,7 +20,6 @@ jobs:
 
       - name: Install dependencies and build Next.js
         run: |
-          cd CLM_next
           npm install
           npm run build
 
