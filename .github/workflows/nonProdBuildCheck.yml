@@ -1,0 +1,26 @@
+name: Non-Prod Build Check
+
+on:
+  pull_request:
+    branches:
+      - non-prod # Only runs when merging into non-prod
+
+jobs:
+  build:
+    name: Verify Build on Non-Prod
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18 # Change version if needed
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run build
+        run: npm run build
