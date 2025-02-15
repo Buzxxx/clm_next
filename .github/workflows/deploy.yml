@@ -21,10 +21,8 @@ jobs:
       - name: 🛠 Install dependencies
         run: npm ci --omit=dev # Install only production dependencies
 
-      - name: 🛠 Ensure rimraf and Next.js CLI are available
-        run: |
-          npm install -g rimraf || echo "rimraf already installed"
-          npm install -g next || echo "Next.js already installed"
+      - name: 🛠 Ensure rimraf is available
+        run: npm install rimraf --save-dev # Ensure rimraf is installed locally
 
       - name: ⚡ Build Next.js App
         run: |
@@ -41,14 +39,10 @@ jobs:
           ls -la .next/standalone || echo "❌ Error: .next/standalone directory not found"
           ls -la .next/static || echo "❌ Error: .next/static directory not found"
 
-      - name: 🛠 Ensure required directories exist
-        run: mkdir -p .next/standalone .next/static public
-
       - name: 📂 Archive Build Files Before Transfer
         run: |
-          echo "📦 Packaging build files..."
-          tar -czf next-build.tar.gz \
-            package.json package-lock.json .next/standalone .next/static public
+          echo "📦 Packaging standalone Next.js build..."
+          tar -czf next-build.tar.gz -C .next/standalone . -C ../../ public
           echo "✅ Archive created: next-build.tar.gz"
 
       - name: 📂 Deploy Build Files to VM
@@ -85,10 +79,13 @@ jobs:
               echo "ℹ️ Next.js container is not running, proceeding..."
             fi
 
-            echo "📦 Extracting new build files..."
-            tar -xzf clm_next/next-build.tar.gz -C clm_next --strip-components=1
+            echo "🗑 Removing old standalone build..."
+            rm -rf clm_next/standalone
 
-            echo "🚀 Restarting Next.js container..."
+            echo "📦 Extracting new standalone build..."
+            tar -xzf clm_next/next-build.tar.gz -C clm_next
+
+            echo "🚀 Restarting Next.js container with standalone build..."
             docker compose up -d --build --no-deps clm_next || (echo "❌ Docker Compose failed!" && exit 1)
 
             echo "✅ Deployment complete!"
