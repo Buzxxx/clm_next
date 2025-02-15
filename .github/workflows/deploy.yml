@@ -131,15 +131,6 @@ jobs:
             echo "🛠 Switching to deployment directory..."
             cd ~/deployments
 
-            echo "🛠 Checking if Next.js container is running..."
-            if docker ps --filter "name=clm_next" --format '{{.Names}}' | grep -q clm_next; then
-              echo "✅ Next.js container is running, stopping it..."
-              docker stop clm_next
-              docker rm clm_next
-            else
-              echo "ℹ️ Next.js container is not running, proceeding..."
-            fi
-
             echo "📦 Extracting new standalone build..."
             tar -xzf clm_next/next-build.tar.gz --overwrite
 
