@@ -140,14 +140,11 @@ jobs:
               echo "ℹ️ Next.js container is not running, proceeding..."
             fi
 
-            echo "🗑 Removing old standalone build..."
-            rm -rf clm_next/standalone
-
             echo "📦 Extracting new standalone build..."
-            tar -xzf clm_next/next-build.tar.gz -C clm_next
+            tar -xzf clm_next/next-build.tar.gz --overwrite
 
             echo "🚀 Restarting Next.js container with standalone build..."
-            docker compose up -d --build --no-deps clm_next || (echo "❌ Docker Compose failed!" && exit 1)
+            docker restart clm_next || (echo "❌ Docker Compose failed!" && exit 1)
 
             echo "✅ Deployment complete!"
 
