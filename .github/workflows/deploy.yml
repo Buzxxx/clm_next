@@ -90,11 +90,12 @@ jobs:
 
           # Archive build files with correct structure
           tar -czf next-build.tar.gz \
-            -C .next/standalone . \
-            -C ../.. .next/static \
-            ${SKIP_PUBLIC:+} -C ../.. public \
-            -C ../.. package.json \
-            ${SKIP_DOCKERFILE:+} -C ../.. Dockerfile
+              .next/standalone \
+              .next/static \
+              public \
+              package.json \
+              Dockerfile
+
 
           # Verify if archive was created successfully
           if [ -f "next-build.tar.gz" ]; then
