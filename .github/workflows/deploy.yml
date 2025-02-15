@@ -74,7 +74,7 @@ jobs:
           fi
 
           # Create the archive with correct directory structure
-          tar -czf next-build.tar.gz -C .next/standalone . -C ../../ public
+          tar -czf next-build.tar.gz -C .next/standalone . -C ../../ .next/static -C ../../ public -C ../../ package.json -C ../../ Dockerfile
 
           if [ -f "next-build.tar.gz" ]; then
             echo "✅ Archive successfully created: next-build.tar.gz"
