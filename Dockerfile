@@ -9,9 +9,6 @@ COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY public ./public
 
-# Install only production dependencies
-RUN npm ci --omit=dev
-
 # Expose the port Next.js runs on
 EXPOSE 3000
 
