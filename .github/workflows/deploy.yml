@@ -67,15 +67,36 @@ jobs:
         run: |
           echo "📦 Packaging standalone Next.js build..."
 
-          # Ensure the required directories exist before archiving
+          # Ensure required directories and files exist before archiving
           if [ ! -d ".next/standalone" ]; then
             echo "❌ Error: .next/standalone directory is missing, build might have failed!" >&2
             exit 1
           fi
 
-          # Create the archive with correct directory structure
-          tar -czf next-build.tar.gz -C .next/standalone . -C ../../ .next/static -C ../../ public -C ../../ package.json -C ../../ Dockerfile
+          if [ ! -d "public" ]; then
+            echo "❌ Warning: public directory is missing, skipping it..."
+            SKIP_PUBLIC=true
+          fi
 
+          if [ ! -f "package.json" ]; then
+            echo "❌ Error: package.json is missing, build cannot proceed!" >&2
+            exit 1
+          fi
+
+          if [ ! -f "Dockerfile" ]; then
+            echo "❌ Warning: Dockerfile is missing, skipping it..."
+            SKIP_DOCKERFILE=true
+          fi
+
+          # Archive build files with correct structure
+          tar -czf next-build.tar.gz \
+            -C .next/standalone . \
+            -C ../.. .next/static \
+            ${SKIP_PUBLIC:+} -C ../.. public \
+            -C ../.. package.json \
+            ${SKIP_DOCKERFILE:+} -C ../.. Dockerfile
+
+          # Verify if archive was created successfully
           if [ -f "next-build.tar.gz" ]; then
             echo "✅ Archive successfully created: next-build.tar.gz"
             ls -lh next-build.tar.gz
