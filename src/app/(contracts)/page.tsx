@@ -11,10 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function Contracts() {
-  return (
-    <>
-      <div>This is testing number 2 </div>
-      <ContractsLayout />
-    </>
-  );
+  return <ContractsLayout />;
 }
