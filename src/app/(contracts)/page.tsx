@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function Contracts() {
   return (
     <>
-      <div>Hello world</div>
+      <div>This is testing number 2 </div>
       <ContractsLayout />
     </>
   );
