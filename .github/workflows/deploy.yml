@@ -132,10 +132,10 @@ jobs:
             cd ~/deployments
 
             echo "📦 Extracting new standalone build..."
-            tar -xzf clm_next/next-build.tar.gz --overwrite
+            tar -xzf clm_next/next-build.tar.gz -C clm_next --overwrite
 
             echo "🚀 Restarting Next.js container with standalone build..."
-            docker compose up -d --build --force-recreate --no-deps clm_next|| (echo "❌ Docker Compose failed!" && exit 1)
+            docker-compose up -d --build --force-recreate --no-deps clm_next || (echo "❌ Docker Compose failed!" && exit 1)
 
             echo "✅ Deployment complete!"
 
