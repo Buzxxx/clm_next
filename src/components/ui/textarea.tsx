@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@/packages/tailwindClassnameMergeLib";
+import { cn } from "@/packages/tailwind/tailwindClassnameMergeLib";
 
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
