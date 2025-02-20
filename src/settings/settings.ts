@@ -1,4 +1,4 @@
-const DEBUG = true; // true for development, false for production
+const DEBUG = false; // true for development, false for production
 
 // export const DEFAULT_LOGIN_REDIRECT = "/home";
 // export const DEFAULT_LOGOUT_REDIRECT = "/auth/login";
