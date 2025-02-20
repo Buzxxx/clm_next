@@ -44,13 +44,17 @@ export const SampleListItems = [
   },
 ];
 
-export async function get_matching_list_controller(selectedOptions: {}) {
+export async function get_matching_list_controller(
+  selectedOptions: Record<string, unknown>
+) {
   const lists = await get_matching_list_from_the_server(selectedOptions);
   console.log("lists", lists);
   return lists;
 }
 
-async function get_matching_list_from_the_server(data: {}) {
+async function get_matching_list_from_the_server(
+  data: Record<string, unknown>
+) {
   try {
     const response = await apiClient(
       apiPaths.getMatchingList,

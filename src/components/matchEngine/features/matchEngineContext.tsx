@@ -25,8 +25,8 @@ interface MatchEngineContextType {
 }
 
 // Create Context with Default Values
-const MatchEngineContext = createContext<MatchEngineContextType | undefined>(
-  undefined
+const MatchEngineContext = React.createContext<MatchEngineContextType | null>(
+  null
 );
 
 // MatchEngineProvider Props
