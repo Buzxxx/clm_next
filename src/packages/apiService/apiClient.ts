@@ -44,9 +44,13 @@ const apiClient = async (
       // If parsing fails (e.g., empty response), return the raw response
       return response;
     }
-  } catch (error: any) {
-    console.error("API Client error:", error);
-    console.error("API Client error message:", error.message);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("API Client error:", error);
+      console.error("API Client error message:", error.message);
+    } else {
+      console.error("API Client error:", error);
+    }
   }
 };
 
