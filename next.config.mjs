@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone", // ✅ Required for Docker builds
+  output: "standalone",
   reactStrictMode: true,
 
   async rewrites() {

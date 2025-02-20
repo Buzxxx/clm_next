@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
-import { cn } from "@/packages/tailwindClassnameMergeLib";
+import { cn } from "@/packages/tailwind/tailwindClassnameMergeLib";
 
 const Drawer = ({
   shouldScaleBackground = true,

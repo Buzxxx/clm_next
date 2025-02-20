@@ -1,4 +1,4 @@
-import { cn } from "@/packages/tailwindClassnameMergeLib";
+import { cn } from "@/packages/tailwind/tailwindClassnameMergeLib";
 
 function Skeleton({
   className,
