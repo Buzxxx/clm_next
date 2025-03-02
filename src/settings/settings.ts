@@ -14,7 +14,7 @@ let ProdServer: Server = {
 };
 
 let ProdBackendServer: Server = {
-  baseDomain: "",
+  baseDomain: "https://clm.centralindia.cloudapp.azure.com/",
   version: "1.0.0",
 };
 
