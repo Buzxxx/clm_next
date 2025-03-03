@@ -47,9 +47,8 @@ export const SampleListItems = [
 export async function get_matching_list_controller(
   selectedOptions: Record<string, unknown>
 ) {
-  const lists = await get_matching_list_from_the_server(selectedOptions);
-  console.log("lists", lists);
-  return lists;
+  const MatchingList = await get_matching_list_from_the_server(selectedOptions);
+  return Array.isArray(MatchingList) ? MatchingList : [];
 }
 
 async function get_matching_list_from_the_server(
@@ -66,6 +65,7 @@ async function get_matching_list_from_the_server(
     );
     return response;
   } catch (error) {
-    throw new Error(`Failed to create lead: ${(error as Error).message}`);
+    console.error(`Failed to fetch matching list: ${(error as Error).message}`);
+    return null;
   }
 }
