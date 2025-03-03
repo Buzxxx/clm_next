@@ -91,6 +91,10 @@ const ResultList = () => {
         <div className="flex justify-center items-center">
           <Spinner />
         </div>
+      ) : objectList.length === 0 ? (
+        <div className="flex justify-center items-center">
+          No results found.
+        </div>
       ) : (
         <div>
           {objectList.map((obj) => (
