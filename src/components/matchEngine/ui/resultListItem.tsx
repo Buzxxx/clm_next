@@ -2,9 +2,15 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "@/app/contract.module.css";
 import CircularProgress from "@/components/ui/icons/circularProgressBar";
-import { BadgeCheck, MapPin, ReceiptText, Info } from "@/components/ui/icons";
+import { BadgeCheck, Info } from "@/components/ui/icons";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 interface ResultListItemProps {
   object: {
@@ -13,7 +19,6 @@ interface ResultListItemProps {
     subname?: string;
     logo: string;
     description: string;
-    location: string;
     matchPercentage: number;
     isVerified: boolean;
     estYear: number;
@@ -29,9 +34,8 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
     subname = "subname",
     logo = "/contracts/images/vendors/basware.svg",
     description = "This is a default description",
-    location = "Berlin, Germany",
     matchPercentage = 0,
-    isVerified = false,
+    isVerified = true,
     estYear = 2010,
     selected = false,
     onSelect = () => {},
@@ -43,77 +47,97 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
     router.push(`/contracts/vendor/${id}`);
   };
 
+  const openMatchModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log("Open modal for match percentage");
+  };
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSelect(id, e.target.checked);
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6 rounded-2xl shadow-lg cursor-pointer relative">
-      <div className="flex items-center justify-between gap-4">
-        <Input
-          type="checkbox"
-          className="bg-transparent border border-gray-300 h-4 w-4"
-          onChange={handleCheckboxChange}
-          checked={selected}
-        />
-        <div className="flex justify-between items-stretch flex-1">
-          <div
-            className="flex flex-col gap-2 w-[92%]"
-            onClick={openVendorDetails}
-          >
-            <div className="flex items-center gap-2 border-r border-slate-200 md:w-fit">
-              <span className="h-12 w-12 rounded-full border border-slate-200 bg-white p-1 flex items-center justify-center">
-                <Image
-                  src={logo}
-                  alt={`${name} logo`}
-                  width={160}
-                  height={160}
-                  className="rounded-full w-full"
-                />
-              </span>
-              <div>
-                <h4 className={`${styles.textPrimary} font-bold`}>{name}</h4>
-                {subname && <p className="text-xs text-gray-500">{subname}</p>}
-                <p className={`${styles.textGray} text-xs`}>Estd. {estYear}</p>
+    <TooltipProvider>
+      <div className="relative flex flex-col gap-4 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer bg-white border border-gray-200 mb-6">
+        {/* ✅ Fixed Verified Badge Positioning - No Overlap */}
+        {isVerified && (
+          <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1 shadow">
+            <BadgeCheck size={14} /> Verified
+          </div>
+        )}
+
+        {/* Top Section - Checkbox & Vendor Info */}
+        <div className="flex items-center justify-between gap-4 mt-3">
+          {/* Selection Checkbox */}
+          <Input
+            type="checkbox"
+            className="bg-transparent border border-gray-300 h-4 w-4"
+            onChange={handleCheckboxChange}
+            checked={selected}
+          />
+
+          {/* Vendor Info */}
+          <div className="flex justify-between items-center flex-1">
+            <div
+              className="flex flex-col gap-2 w-[85%]"
+              onClick={openVendorDetails}
+            >
+              <div className="flex items-center gap-4">
+                {/* Vendor Logo - Now Properly Positioned */}
+                <span className="h-14 w-14 rounded-full border border-gray-300 bg-white p-1 flex items-center justify-center shadow-sm mt-1">
+                  <Image
+                    src={logo}
+                    alt={`${name} logo`}
+                    width={160}
+                    height={160}
+                    className="rounded-full w-full"
+                  />
+                </span>
+
+                {/* Vendor Details - Now Spaced from Verified Badge */}
+                <div className="mt-1">
+                  <h4 className="text-lg font-semibold">{name}</h4>
+                  {subname && (
+                    <p className="text-xs text-gray-500">{subname}</p>
+                  )}
+                  <p className="text-xs text-gray-400">Estd. {estYear}</p>
+                </div>
               </div>
             </div>
-            <p className={`${styles.textGray} text-xs px-2 line-clamp-2`}>
-              {description}
-            </p>
-          </div>
-          <div className="flex flex-col gap-1 flex-1 md:w-[20%] text-center">
-            <p className={`uppercase ${styles.textGray} text-xs text-center`}>
-              Match %
-            </p>
-            <div className="flex justify-center">
-              <CircularProgress
-                percentage={matchPercentage}
-                size={40}
-                strokeWidth={3}
-              />
-            </div>
+
+            {/* ✅ Clickable Match % with Tooltip - Aligned */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className="flex flex-col gap-2 items-center w-[20%] cursor-pointer"
+                  onClick={openMatchModal}
+                >
+                  <p className="uppercase text-xs text-center text-gray-500 font-medium">
+                    Match %
+                  </p>
+                  <CircularProgress
+                    percentage={matchPercentage}
+                    size={42}
+                    strokeWidth={4}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Click to view match details</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
-      </div>
-      <div className="flex rounded-lg bg-gray-400/10 md:p-4">
-        <div className="flex justify-between w-full">
-          <div className="flex items-center md:gap-6 gap-2 md:text-sm text-xs font-semibold">
-            <div className="flex items-center gap-1">
-              <MapPin className={`${styles.textGray} stroke-2`} size={20} />
-              <p className={styles.textPrimary}>{location}</p>
-            </div>
-          </div>
-          {isVerified && (
-            <Badge
-              variant="default"
-              className="rounded-md bg-green-600 flex gap-1 py-1 max-md:text-xs"
-            >
-              <BadgeCheck size={16} /> Verified
-            </Badge>
-          )}
+
+        {/* Description (Limited with Read More) */}
+        <div className="text-sm text-gray-700 px-2 line-clamp-2 leading-relaxed">
+          {description}{" "}
+          <span className="text-blue-500 cursor-pointer hover:underline">
+            Read More
+          </span>
         </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 

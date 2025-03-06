@@ -28,6 +28,7 @@ const SelectForm = () => {
             <MultiSelect
               name={cat.name}
               description={cat.description}
+              image={cat.image}
               options={cat.options}
               selected={selectedOptions[cat.id] || []}
               onChange={(selectedIds) =>
