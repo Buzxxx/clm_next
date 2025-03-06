@@ -25,6 +25,7 @@ interface MultiSelectProps {
   name: string;
   description: string;
   options: { id: number; name: string }[];
+  image?: string;
   selected: number[];
   onChange: (selected: number[]) => void;
 }
@@ -33,6 +34,7 @@ export function MultiSelect({
   name,
   description,
   options,
+  image,
   selected,
   onChange,
 }: MultiSelectProps) {
@@ -48,12 +50,15 @@ export function MultiSelect({
   const handleRemove = (id: number) => {
     onChange(selected.filter((item) => item !== id));
   };
+  const displayImage = image
+    ? `/matchengine/images/categories/${image}`
+    : "/matchengine/images/categories/default.webp";
 
   return (
     <div className="flex md:flex-row flex-col md:gap-6 gap-2 rounded-xl shadow-lg p-4 border border-slate-200">
       <div className="flex gap-4 items-start justify-between md:hidden">
         <Image
-          src="/contracts/images/capability.png"
+          src={displayImage}
           alt="default"
           width={250}
           height={250}
@@ -69,7 +74,7 @@ export function MultiSelect({
         </div>
       </div>
       <Image
-        src="/contracts/images/capability.png"
+        src={displayImage}
         alt="default"
         width={250}
         height={250}
