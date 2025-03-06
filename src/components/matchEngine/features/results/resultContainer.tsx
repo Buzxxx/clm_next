@@ -19,7 +19,7 @@ import { ListItemInterface } from "../resultListObject";
 import { get_matching_list_controller } from "../resultListObject";
 import { Spinner } from "@/components/ui/icons";
 
-const ResultList = () => {
+const ResultContainer = () => {
   const {
     reset,
     currentPage,
@@ -120,4 +120,4 @@ const ResultList = () => {
   );
 };
 
-export default ResultList;
+export default ResultContainer;
