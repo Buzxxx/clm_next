@@ -28,11 +28,12 @@ interface ResultListItemProps {
 }
 
 const ResultListItem = ({ object }: ResultListItemProps) => {
+  const DEFAULT_LOGO = "/vendor/images/vendor-default-logo.webp";
   const {
     id = "",
     name = "Unknown Vendor",
     subname = "subname",
-    logo = "/contracts/images/vendors/basware.svg",
+    logo = DEFAULT_LOGO,
     description = "This is a default description",
     matchPercentage = 0,
     isVerified = true,

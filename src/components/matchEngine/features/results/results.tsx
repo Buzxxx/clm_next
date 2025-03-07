@@ -1,6 +1,6 @@
 import React from "react";
 import ResultFilterForm from "./resultFilterForm";
-import ResultList from "./resultContainer";
+import ResultList from "./resultContainer/resultContainer";
 
 const Results = () => {
   return (

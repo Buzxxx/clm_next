@@ -7,7 +7,6 @@ export interface ListItemInterface {
   subname?: string;
   logo: string;
   description: string;
-  location: string;
   matchPercentage: number;
   isVerified: boolean;
   estYear: number;

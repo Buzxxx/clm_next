@@ -12,7 +12,6 @@ export type CategoryType = {
 export async function get_categories_controller() {
   const categories = await get_categories_from_server();
   const returnList = Array.isArray(categories) ? categories : [];
-  console.log("category is -", returnList);
   return returnList;
 }
 
