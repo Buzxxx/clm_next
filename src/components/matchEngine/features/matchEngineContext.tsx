@@ -8,6 +8,7 @@ import React, {
   ReactNode,
 } from "react";
 import { CategoryType, get_categories_controller } from "./categoryObject";
+import { ListItemInterface } from "@/components/matchEngine/features/resultListObject";
 
 // Define Context Type
 interface MatchEngineContextType {
@@ -22,6 +23,13 @@ interface MatchEngineContextType {
   paginatedCategories: CategoryType[][];
   selectedOptions: Record<number, number[]>;
   handleSelectionChange: (categoryId: number, selectedIds: number[]) => void;
+
+  objectList: ListItemInterface[];
+  setObjectList: (objectList: ListItemInterface[]) => void;
+  selected: string[];
+  setSelected: (selected: string[]) => void;
+  handleSelect: (id: string, isSelected: boolean) => void;
+  handleUnselectAll: () => void;
 }
 
 // Create Context with Default Values
@@ -44,6 +52,9 @@ export const MatchEngineProvider = ({ children }: MatchEngineProviderProps) => {
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, number[]>
   >({});
+
+  const [objectList, setObjectList] = useState<ListItemInterface[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
 
   useEffect(() => {
     const setCustomPaginatedCategories = (categories: CategoryType[]) => {
@@ -94,6 +105,28 @@ export const MatchEngineProvider = ({ children }: MatchEngineProviderProps) => {
     }
   };
 
+  // Handle checkbox selection
+  const handleSelect = (id: string, isSelected: boolean) => {
+    setObjectList((prevList) =>
+      prevList.map((item) =>
+        item.id === id ? { ...item, selected: isSelected } : item
+      )
+    );
+    setSelected((prevSelected) =>
+      isSelected
+        ? [...prevSelected, id]
+        : prevSelected.filter((selectedId) => selectedId !== id)
+    );
+  };
+
+  // Handle unselect all
+  const handleUnselectAll = () => {
+    setObjectList((prevList) =>
+      prevList.map((item) => ({ ...item, selected: false }))
+    );
+    setSelected([]);
+  };
+
   return (
     <MatchEngineContext.Provider
       value={{
@@ -108,6 +141,13 @@ export const MatchEngineProvider = ({ children }: MatchEngineProviderProps) => {
         reset,
         handleSelectionChange,
         selectedOptions,
+
+        objectList,
+        setObjectList,
+        selected,
+        setSelected,
+        handleSelect,
+        handleUnselectAll,
       }}
     >
       {children}
