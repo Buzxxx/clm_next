@@ -10,18 +10,10 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import VendorModal from "./vendorModal";
+import { ListItemInterface } from "@/components/matchEngine/features/resultListObject";
 
 interface ResultListItemProps {
-  object: {
-    id: string;
-    name: string;
-    subname?: string;
-    logo: string;
-    description: string;
-    matchPercentage: number;
-    isVerified: boolean;
-    estYear: number;
-    selected: boolean;
+  object: ListItemInterface & {
     onSelect: (id: string, selected: boolean) => void;
   };
 }
@@ -31,12 +23,12 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
   const {
     id = "",
     name = "Unknown Vendor",
-    subname = "subname",
+    software_name = "",
     logo = DEFAULT_LOGO,
     description = "This is a default description",
     matchPercentage = 0,
-    isVerified = true,
-    estYear = 2010,
+    is_verified = true,
+    business_started_date,
     selected = false,
     onSelect = () => {},
   } = object;
@@ -71,7 +63,7 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
   return (
     <TooltipProvider>
       <div className="relative flex flex-col gap-4 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer bg-white border border-gray-200 mb-6">
-        {isVerified && (
+        {is_verified && (
           <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-3 py-1 rounded-md flex items-center gap-1 shadow">
             <BadgeCheck size={14} /> Verified
           </div>
@@ -105,10 +97,15 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
                   >
                     {name}
                   </h4>
-                  {subname && (
-                    <p className="text-xs text-gray-500">{subname}</p>
+                  {software_name && (
+                    <p className="text-xs text-gray-500">{software_name}</p>
                   )}
-                  <p className="text-xs text-gray-400">Estd. {estYear}</p>
+                  <p className="text-xs text-gray-400">
+                    Estd.{" "}
+                    {business_started_date
+                      ? new Date(business_started_date).getFullYear()
+                      : "N/A"}
+                  </p>
                 </div>
               </div>
             </div>

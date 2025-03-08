@@ -4,12 +4,12 @@ import { apiPaths } from "../urls";
 export interface ListItemInterface {
   id: string;
   name: string;
-  subname?: string;
+  software_name?: string;
   logo: string;
   description: string;
   matchPercentage: number;
-  isVerified: boolean;
-  estYear: number;
+  is_verified: boolean;
+  business_started_date: Date;
   services: string[];
   selected: boolean;
 }
@@ -55,7 +55,7 @@ async function get_matching_list_from_the_server(
 ) {
   try {
     const response = await apiClient(
-      apiPaths.getMatchingList,
+      apiPaths.GET_MATCHING_LIST,
       "ProdBackendServer",
       {
         method: "POST",
