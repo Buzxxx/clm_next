@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ResultListItem from "../../../ui/resultListItem";
+import ResultListItem from "./resultListItem";
 import FixedFooter from "@/components/matchEngine/ui/fixedFooter";
 import { useMatchEngine } from "@/components/matchEngine/features/matchEngineContext";
 import { get_matching_list_controller } from "../../resultListObject";
@@ -22,6 +22,7 @@ const ResultContainer = () => {
     selectedOptions,
   } = useMatchEngine();
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchResults = async () => {
       setIsLoading(true);
