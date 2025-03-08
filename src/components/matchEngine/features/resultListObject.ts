@@ -47,10 +47,6 @@ export async function get_matching_list_controller(
   selectedOptions: Record<string, unknown>
 ) {
   const MatchingList = await get_matching_list_from_the_server(selectedOptions);
-  console.log(
-    "data from server - ",
-    Array.isArray(MatchingList) ? MatchingList : []
-  );
   return Array.isArray(MatchingList) ? MatchingList : [];
 }
 
