@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { shimmer, toBase64 } from "@/components/ui/generateBlur";
-import logo from "../../../../public/contracts/images/logo.png";
+import logo from "../../../../public/base/images/ABiz-logo-white.png";
 export const ContractsLogo = () => {
   return (
     <Image

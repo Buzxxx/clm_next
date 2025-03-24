@@ -1,75 +1,58 @@
-import Image from "next/image";
 import Link from "next/link";
+import { Linkedin, FacebookColored } from "@/components/ui/icons";
+import Image from "next/image";
+import logo from "../../../../public/base/images/ABiz-Logo.gif";
+import { shimmer, toBase64 } from "@/components/ui/generateBlur";
 
 const Footer = () => {
   return (
-    <footer className="text-gray-300 bg-slate-900 flex flex-col gap-4 md:px-16 py-8">
-      <div className="border-b border-slate-600 flex justify-between items-center py-4">
-        <div>
+    <footer className="text-white text-sm">
+      {/* Logo Section */}
+      <div className="bg-white py-6 flex justify-center">
+        <Link href="/" aria-label="ABiz Home">
           <Image
-            src={"/contracts/images/image (2).png"}
-            alt="logo"
-            width={80}
+            src={logo}
+            alt="ABiz Logo"
+            width={280}
             height={80}
-            className="inline"
+            priority
+            placeholder="blur"
+            blurDataURL={`data:image/svg+xml;base64,${toBase64(
+              shimmer(280, 80)
+            )}`}
           />
-          <span className="font-bold text-xl"> ABiz</span>
-        </div>
-        <div className="flex gap-2 items-center">
-          Follow Us:
-          <ul className="flex items-center gap-2">
-            <li className="p-2 rounded-full bg-slate-700 hover:bg-slate-800 ">
-              <Link href="/">
-                <Image
-                  src={"/contracts/assets/instagram.svg"}
-                  alt=""
-                  height={20}
-                  width={20}
-                />
-              </Link>
-            </li>
-            <li className="p-2 rounded-full bg-slate-700 hover:bg-slate-800 ">
-              <Link href="/">
-                <Image
-                  src={"/contracts/assets/linkedin.svg"}
-                  alt=""
-                  height={20}
-                  width={20}
-                />
-              </Link>
-            </li>
-            <li className="p-2 rounded-full bg-slate-700 hover:bg-slate-800 ">
-              <Link href="/">
-                <Image
-                  src={"/contracts/assets/twitter.svg"}
-                  alt=""
-                  height={20}
-                  width={20}
-                />
-              </Link>
-            </li>
-          </ul>
-        </div>
+        </Link>
       </div>
-      <div className="border-b border-slate-600 py-8 ">
-        <p className="text-sm text-slate-300">
-          This online application and associated materials are based on
-          information communicated by vendors to ABiz. They are provided as a
-          source of guidance and we encourage users to conduct an independent
-          assessment as the basis of any of their actions or decisions. Neither
-          WorldCC nor Capgemini assumes any responsibility regarding the
-          accuracy or exhaustiveness of the information or data provided or for
-          the use of the tool by any user/third party.
-        </p>
-        <p className="mt-4 text-slate-300 text-sm">
-          ABiz is the sole author and the exclusive owner of any intellectual
-          property right on the tool and the report
-        </p>
-      </div>
-      <div>
-        <p className="text-slate-300 text-xs text-center">
-          Copyright © 2024. ABiz
-        </p>
+
+      {/* Footer Info Section */}
+      <div className="bg-[#004785] py-6 border-t border-black">
+        <div className="max-w-screen-xl mx-auto flex flex-col items-center justify-center space-y-3">
+          {/* Social Icons */}
+          <div className="flex space-x-6">
+            <Link
+              href="https://linkedin.com"
+              aria-label="LinkedIn"
+              target="_blank"
+            >
+              <Linkedin size={25} />
+            </Link>
+            <Link
+              href="https://facebook.com"
+              aria-label="Facebook"
+              target="_blank"
+            >
+              <FacebookColored size={25} />
+            </Link>
+          </div>
+
+          {/* Copyright */}
+          <div className="text-center">
+            © 2025 ABiz |{" "}
+            <Link href="/privacy-policy" className="hover:underline">
+              Privacy Policy
+            </Link>
+          </div>
+        </div>
       </div>
     </footer>
   );
