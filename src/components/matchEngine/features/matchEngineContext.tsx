@@ -23,7 +23,6 @@ interface MatchEngineContextType {
   paginatedCategories: CategoryType[][];
   selectedOptions: Record<number, number[]>;
   handleSelectionChange: (categoryId: number, selectedIds: number[]) => void;
-
   objectList: ListItemInterface[];
   setObjectList: (objectList: ListItemInterface[]) => void;
   selected: string[];

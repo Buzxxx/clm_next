@@ -21,7 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@settings/*": ["./src/settings/*"],
-      "@pkg/*": ["./src/packages/*"]
+      "@pkg/*": ["./src/packages/*"],
+      "@public/*": ["./public/*"]
     }
   },
   "include": [
