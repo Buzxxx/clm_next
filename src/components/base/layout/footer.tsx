@@ -8,13 +8,13 @@ const Footer = () => {
   return (
     <footer className="text-white text-sm">
       {/* Logo Section */}
-      <div className="bg-white py-6 flex justify-center">
+      <div className="bg-slate-50 py-6 flex justify-center">
         <Link href="/" aria-label="ABiz Home">
           <Image
             src={logo}
             alt="ABiz Logo"
-            width={280}
-            height={80}
+            width={140}
+            height={40}
             priority
             placeholder="blur"
             blurDataURL={`data:image/svg+xml;base64,${toBase64(

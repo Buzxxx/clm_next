@@ -4,7 +4,7 @@ import Link from "next/link";
 import { vendor_object_controller } from "./vendorObject";
 
 const VendorPage = ({ id }: { id: string }) => {
-  const DEFAULT_LOGO = "/vendor/images/vendor-default-logo.webp";
+  const DEFAULT_LOGO = "vendor-default-logo.webp";
   const [isLoading, setIsLoading] = useState(true);
   const [vendorData, setVendorData] = useState<any>(null);
 
@@ -42,7 +42,7 @@ const VendorPage = ({ id }: { id: string }) => {
       <div className="bg-white shadow-lg rounded-xl p-6 flex flex-col md:flex-row items-center gap-6">
         <Image
           className="rounded-lg border border-gray-300 shadow-md p-2 h-20 w-20 md:h-24 md:w-24 object-contain"
-          src={vendorData.logo || DEFAULT_LOGO}
+          src={`/vendor/images/logo/${vendorData.logo || DEFAULT_LOGO}`}
           alt={`${vendorData.name} logo`}
           width={96}
           height={96}

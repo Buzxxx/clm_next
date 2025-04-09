@@ -1,17 +1,19 @@
+"use client";
+
 import React from "react";
 import ResultFilterForm from "./resultFilter/resultFilterForm";
 import ResultList from "./resultContainer/resultContainer";
 
 const Results = () => {
   return (
-    <div className="container mx-auto" style={{ maxWidth: "95%" }}>
-      <div className="flex min-h-screen gap-8 pb-20 relative">
-        <div className="w-1/4 ">
+    <div className="max-w-screen-2xl mx-auto px-4 lg:px-8 py-10">
+      <div className="flex flex-col lg:flex-row gap-6 min-h-screen">
+        <aside className="w-full lg:w-1/4">
           <ResultFilterForm />
-        </div>
-        <div className="w-3/4">
+        </aside>
+        <main className="w-full lg:w-3/4">
           <ResultList />
-        </div>
+        </main>
       </div>
     </div>
   );

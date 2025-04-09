@@ -9,29 +9,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Bolt } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { useMatchEngine } from "@/components/matchEngine/features/matchEngineContext";
 
 // Lazy load the CompareModal
-const CompareModal = lazy(() => import("./menu/compareModal"));
+const CompareModal = lazy(() => import("../compare/compareModal"));
 
 const ResultsMenu = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { selected, handleUnselectAll } = useMatchEngine();
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const openModal = () => setIsModalOpen(true);
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline">
-            <Bolt size={20} />
-            Actions
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-gray-600 hover:text-[#003E78]"
+            aria-label="Actions"
+          >
+            <MoreVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -41,14 +44,11 @@ const ResultsMenu = () => {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleUnselectAll}>
             Unselect all
-            <DropdownMenuShortcut>L</DropdownMenuShortcut>
+            <DropdownMenuShortcut></DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Export</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Load CompareModal only when needed */}
       {isModalOpen && (
         <Suspense fallback={<div>Loading...</div>}>
           <CompareModal
