@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@settings/*": ["./src/settings/*"],
+      "@global/*": ["./src/global/*"],
       "@pkg/*": ["./src/packages/*"],
       "@public/*": ["./public/*"]
     }

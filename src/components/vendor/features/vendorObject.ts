@@ -1,4 +1,4 @@
-import apiClient from "@/packages/apiService/apiClient";
+import ApiClient from "@/packages/apiServices/apiClient";
 import { apiPaths } from "../urls";
 
 export async function vendor_object_controller(id: string) {
@@ -8,10 +8,8 @@ export async function vendor_object_controller(id: string) {
 async function get_vendor_from_server(id: string) {
   const base_url = apiPaths.GET_VENDOR + "/" + id;
   try {
-    const response = await apiClient(base_url, "ProdBackendServer", {
-      method: "GET",
-    });
-    return response;
+    const response = await ApiClient.get(base_url, "BACKEND");
+    return response?.json();
   } catch (error) {
     console.error(`Failed to fetch vendor: ${(error as Error).message}`);
     return {};

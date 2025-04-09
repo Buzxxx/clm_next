@@ -1,4 +1,4 @@
-import apiClient from "@/packages/apiService/apiClient";
+import ApiClient from "@/packages/apiServices/apiClient";
 import { apiPaths } from "../urls";
 
 export interface ListItemInterface {
@@ -44,9 +44,15 @@ export const SampleListItems = [
 ];
 
 export async function get_matching_list_controller(
+  appType: string | undefined,
   selectedOptions: Record<string, unknown>
 ) {
-  const MatchingList = await get_matching_list_from_the_server(selectedOptions);
+  if (!appType) return [];
+  const MatchingList = await get_matching_list_from_the_server({
+    apptype: appType,
+    userSelection: selectedOptions,
+  });
+
   return Array.isArray(MatchingList) ? MatchingList : [];
 }
 
@@ -54,15 +60,12 @@ async function get_matching_list_from_the_server(
   data: Record<string, unknown>
 ) {
   try {
-    const response = await apiClient(
+    const response = await ApiClient.post(
       apiPaths.GET_MATCHING_LIST,
-      "ProdBackendServer",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
+      "BACKEND",
+      data
     );
-    return response;
+    return response?.json();
   } catch (error) {
     console.error(`Failed to fetch matching list: ${(error as Error).message}`);
     return null;
