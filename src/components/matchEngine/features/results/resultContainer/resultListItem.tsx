@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import CircularProgress from "@/components/ui/icons/circularProgressBar";
+//import CircularProgress from "@/components/ui/icons/circularProgressBar";
+import ProgressRing from "@/components/ui/customs/progressRing";
 import { BadgeCheck } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,7 +20,7 @@ interface ResultListItemProps {
 }
 
 const ResultListItem = ({ object }: ResultListItemProps) => {
-  const DEFAULT_LOGO = "/vendor/images/vendor-default-logo.webp";
+  const DEFAULT_LOGO = "vendor-default-logo.webp";
   const {
     id = "",
     name = "Unknown Vendor",
@@ -32,7 +33,6 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
     selected = false,
     onSelect = () => {},
   } = object;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to open the modal and update the URL without navigating
@@ -82,7 +82,7 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
               <div className="flex items-center gap-4">
                 <span className="h-14 w-14 rounded-full border border-gray-300 bg-white p-1 flex items-center justify-center shadow-sm mt-1">
                   <Image
-                    src={logo}
+                    src={`/vendor/images/logo/${logo || DEFAULT_LOGO}`}
                     alt={`${name} logo`}
                     width={160}
                     height={160}
@@ -116,15 +116,14 @@ const ResultListItem = ({ object }: ResultListItemProps) => {
                   className="flex flex-col gap-2 items-center w-[20%] cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Open modal for match percentage");
                   }}
                 >
                   <p className="uppercase text-xs text-center text-gray-500 font-medium">
                     Match %
                   </p>
-                  <CircularProgress
+                  <ProgressRing
                     percentage={matchPercentage}
-                    size={42}
+                    size={40}
                     strokeWidth={4}
                   />
                 </div>

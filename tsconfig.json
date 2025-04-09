@@ -20,8 +20,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@settings/*": ["./src/settings/*"],
-      "@pkg/*": ["./src/packages/*"]
+      "@global/*": ["./src/global/*"],
+      "@pkg/*": ["./src/packages/*"],
+      "@public/*": ["./public/*"]
     }
   },
   "include": [

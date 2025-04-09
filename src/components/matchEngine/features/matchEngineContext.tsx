@@ -7,7 +7,8 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { CategoryType, get_categories_controller } from "./categoryObject";
+import { useSearchParams } from "next/navigation";
+import { AppFeatureType, get_search_params } from "./searchObject";
 import { ListItemInterface } from "@/components/matchEngine/features/resultListObject";
 
 // Define Context Type
@@ -18,12 +19,13 @@ interface MatchEngineContextType {
   handleNext: () => void;
   handlePrevious: () => void;
   reset: () => void;
-  categories: CategoryType[];
-  setCategories: (categories: CategoryType[]) => void;
-  paginatedCategories: CategoryType[][];
+  searchParams: AppFeatureType | undefined;
+  setSearchParams: (searchParams: AppFeatureType | undefined) => void;
+  appType: string | undefined;
+  SetApptype: (apptype: string | undefined) => void;
   selectedOptions: Record<number, number[]>;
+  setSelectedOptions: (selectedoption: Record<number, number[]>) => void;
   handleSelectionChange: (categoryId: number, selectedIds: number[]) => void;
-
   objectList: ListItemInterface[];
   setObjectList: (objectList: ListItemInterface[]) => void;
   selected: string[];
@@ -45,51 +47,51 @@ interface MatchEngineProviderProps {
 export const MatchEngineProvider = ({ children }: MatchEngineProviderProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
-  const [categories, setCategories] = useState<CategoryType[]>([]);
-  const [paginatedCategories, setPaginatedCategories] = useState<
-    CategoryType[][]
-  >([]);
+  const [searchParams, setSearchParams] = useState<
+    AppFeatureType | undefined
+  >();
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, number[]>
   >({});
-
+  const [appType, SetApptype] = useState<string | undefined>();
   const [objectList, setObjectList] = useState<ListItemInterface[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
+  const urlParam = useSearchParams();
+  const system = urlParam.get("system");
 
   useEffect(() => {
-    const setCustomPaginatedCategories = (categories: CategoryType[]) => {
-      const paginated = [];
-      const threshold = 3;
-      for (let i = 0; i < categories.length; i += threshold) {
-        paginated.push(categories.slice(i, i + threshold));
-      }
-      paginated.push([]);
-      setCategories(categories);
-      setPaginatedCategories(paginated);
-    };
-
-    const fetchCategories = async () => {
+    const fetchSearchParams = async () => {
       try {
-        const category = await get_categories_controller();
-        setCustomPaginatedCategories(category);
-        setIsLoading(false);
+        if (system) {
+          SetApptype(system);
+          const seachParams = await get_search_params(system);
+          setSearchParams(seachParams);
+          setIsLoading(false);
+        } else {
+          setIsLoading(false);
+        }
       } catch (error) {
-        console.error("Failed to fetch categories", error);
+        console.error("Failed to fetch searchParams", error);
       }
     };
-
-    fetchCategories();
-  }, []);
+    fetchSearchParams();
+  }, [urlParam]);
 
   const handleSelectionChange = (categoryId: number, selectedIds: number[]) => {
-    setSelectedOptions((prev) => ({
-      ...prev,
-      [categoryId]: selectedIds,
-    }));
+    setSelectedOptions((prev) =>
+      selectedIds.length === 0
+        ? Object.fromEntries(
+            Object.entries(prev).filter(([key]) => Number(key) !== categoryId)
+          )
+        : { ...prev, [categoryId]: selectedIds }
+    );
   };
 
   const handleNext = () => {
-    if (currentPage < paginatedCategories.length - 1) {
+    if (
+      searchParams &&
+      currentPage < (searchParams?.subTypes?.length || 0) - 1
+    ) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -135,13 +137,14 @@ export const MatchEngineProvider = ({ children }: MatchEngineProviderProps) => {
         setCurrentPage,
         handleNext,
         handlePrevious,
-        categories,
-        setCategories,
-        paginatedCategories,
+        searchParams,
+        setSearchParams,
+        appType,
+        SetApptype,
         reset,
         handleSelectionChange,
         selectedOptions,
-
+        setSelectedOptions,
         objectList,
         setObjectList,
         selected,

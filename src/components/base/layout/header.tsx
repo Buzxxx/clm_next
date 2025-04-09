@@ -1,53 +1,118 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Search, MenuIcon } from "@/components/ui/icons";
-import styles from "@/app/contract.module.css";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { ContractsLogo } from "../ui/logo";
-const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div
-      className={`flex justify-between md:gap-2 gap-8 items-center md:px-16 px-4 py-3 bg-transparent ${styles.contractsNavbar} ${styles.bgPrimary} shadow-sm `}
-    >
-      <ContractsLogo />
-      <div className="flex items-center justify-evenly md:gap-16 ">
-        <div className="flex gap-2 max-md:flex-1 relative flex-1 md:w-80">
-          <Input
-            placeholder="Search..."
-            className={`border-gray-500 bg-transparent ${styles.navSearch}`}
-          />
-          <Search className="absolute right-2 top-1/2 -translate-y-1/2" />
-        </div>
-        <ul className="md:flex gap-8 justify-between items-center hidden">
-          <li className=" cursor-pointer">Home</li>
-          <li className=" cursor-pointer">About </li>
-          <li className=" cursor-pointer">Vendor List</li>
-          <li className=" cursor-pointer">Register</li>
-          <li className=" cursor-pointer">Login</li>
-        </ul>
-        <ul
-          className={`md:hidden flex flex-col absolute top-16 gap-4 items-center transition-all bg-white border h-screen w-2/3 py-4 ml-auto z-40  ${
-            isOpen ? "translate-x" : "translate-x-80"
-          }`}
-        >
-          <li className=" cursor-pointer">Home</li>
-          <li className=" cursor-pointer">Help </li>
-          <li className=" cursor-pointer">Vendor List</li>
-          <li className=" cursor-pointer">Register</li>
-          <li className=" cursor-pointer">Login</li>
-        </ul>
-        <Button
-          className="bg-transparent md:hidden"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <MenuIcon color="black" />
-        </Button>
-      </div>
-    </div>
-  );
-};
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { clsx } from "clsx";
+import { MenuIcon } from "@/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import { shimmer, toBase64 } from "@/components/ui/generateBlur";
+import logo from "../../../../public/base/images/ABiz-logo-white.png";
 
-export default Header;
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "Vendor Search", href: "/search" },
+  { label: "ABiz", href: "https://www.abizcon.com/" },
+  {
+    label: "About us",
+    href: "https://www.abizcon.com/why-us/about-the-abiz-team/",
+  },
+  { label: "Contact us", href: "https://www.abizcon.com/contact-abiz/" },
+  { label: "Login", href: "/auth/login" },
+];
+
+export default function Header() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+
+  const handleRedirect = (url: string) => {
+    window.location.href = url;
+  };
+
+  return (
+    <header className="sticky top-0 bg-[#003E78] text-white w-full shadow-md z-50">
+      <div className="mx-auto flex items-center justify-between px-6 md:px-20 py-2 md:py-4">
+        {/* Logo */}
+        <div
+          onClick={() => handleRedirect("/")}
+          className="flex items-center cursor-pointer"
+          aria-label="ABiz Home"
+        >
+          <Image
+            src={logo}
+            alt="ABiz Logo"
+            width={280}
+            height={80}
+            priority
+            placeholder="blur"
+            blurDataURL={`data:image/svg+xml;base64,${toBase64(
+              shimmer(280, 80)
+            )}`}
+          />
+        </div>
+
+        {/* Desktop Navigation */}
+        <nav
+          className="hidden md:flex items-center gap-10 text-[15px] font-semibold tracking-wide"
+          aria-label="Main navigation"
+        >
+          {navLinks.map((link) => (
+            <button
+              key={link.label}
+              onClick={() => handleRedirect(link.href)}
+              className={clsx(
+                "hover:opacity-90 transition-opacity",
+                pathname === link.href && "underline underline-offset-4"
+              )}
+            >
+              {link.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Mobile Toggle */}
+        <div className="md:hidden">
+          <Button
+            variant="ghost"
+            className="text-white p-2"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            <MenuIcon />
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileOpen && (
+        <div className="md:hidden fixed top-[72px] left-0 right-0 bg-white text-black px-6 py-4 shadow z-40 transition-all">
+          {navLinks.map((link) => (
+            <button
+              key={link.label}
+              onClick={() => {
+                handleRedirect(link.href);
+                setMobileOpen(false);
+              }}
+              className={clsx(
+                "block w-full text-left py-3 border-b border-gray-200",
+                pathname === link.href && "font-semibold text-[#003E78]"
+              )}
+            >
+              {link.label}
+            </button>
+          ))}
+          <Button
+            variant="outline"
+            className="mt-4 w-full border-[#003E78] text-[#003E78] hover:bg-[#003E78] hover:text-white transition"
+            onClick={() => {
+              setMobileOpen(false);
+              handleRedirect("/demo");
+            }}
+          >
+            Get a Demo
+          </Button>
+        </div>
+      )}
+    </header>
+  );
+}
